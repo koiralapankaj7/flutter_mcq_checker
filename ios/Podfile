@@ -58,6 +58,16 @@ target 'Runner' do
     File.symlink(p[:path], symlink)
     pod p[:name], :path => File.join(symlink, 'ios')
   }
+
+
+  # pod 'Firebase/Core'
+  # pod 'Firebase/MLVision'
+
+  pod 'Firebase/MLVisionBarcodeModel'
+  pod 'Firebase/MLVisionFaceModel'
+  pod 'Firebase/MLVisionLabelModel'
+  pod 'Firebase/MLVisionTextModel'
+
 end
 
 post_install do |installer|
@@ -68,7 +78,4 @@ post_install do |installer|
   end
 end
 
-# pod 'Firebase/MLVisionBarcodeModel'
-# pod 'Firebase/MLVisionFaceModel'
-# pod 'Firebase/MLVisionLabelModel'
-# pod 'Firebase/MLVisionTextModel'
+
