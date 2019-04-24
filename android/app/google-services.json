@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "563839280877",
+    "firebase_url": "https://flutter-mcq-checker.firebaseio.com",
+    "project_id": "flutter-mcq-checker",
+    "storage_bucket": "flutter-mcq-checker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563839280877:android:6694087d4f55232a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_mcq_checker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563839280877-k2r0cp06ho2e956hcbjk8ul29844ebmv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_mcq_checker",
+            "certificate_hash": "45b00acc021cbac57fd0bf9dd290b0e30d425849"
+          }
+        },
+        {
+          "client_id": "563839280877-bu65m8lsodpab7o12f4bc6pf9v96889i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwZqu2r3ix25wi7Yvszc2FHAdxoD2r-D4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563839280877-bu65m8lsodpab7o12f4bc6pf9v96889i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "563839280877-fg6oqu68ggegarahlc80k79fn361pddd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterMcqChecker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
