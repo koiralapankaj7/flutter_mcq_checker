@@ -16,8 +16,7 @@ class ModuleListTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          print(module.id);
-          Navigator.pushNamed(context, '/${module.id}');
+          Navigator.pushNamed(context, 'resultScreen', arguments: module);
         },
         leading: CircleAvatar(
           backgroundColor: Color(0xE6344955),

@@ -45,9 +45,6 @@ class ModuleBloc {
   }
 
   Future<int> addModule(Module module) async {
-    print('Add module called');
-    print('${moduleList == null}');
-
     // Update moduleList with new element.
     moduleList.add(module);
     // Add updated moduleList to the sink
