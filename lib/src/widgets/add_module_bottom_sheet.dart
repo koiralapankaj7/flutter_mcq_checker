@@ -366,21 +366,34 @@ class AddModule extends StatelessWidget {
   Future processImage() async {
     print("Processing image....");
     FirebaseVisionImage image = FirebaseVisionImage.fromFile(pickedImage);
-    print('File name is ${pickedImage}');
     TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
-    print('Text recognizer is $textRecognizer');
     VisionText text = await textRecognizer.processImage(image);
-    print('Text text is ${text.blocks}');
+
+    Map<int, String> questionAnswer = Map();
+    int questionNo;
 
     for (TextBlock block in text.blocks) {
-      print('Block is $block');
       for (TextLine textLine in block.lines) {
-        print('Textline is $textLine');
         for (TextElement word in textLine.elements) {
-          print('Text is ${word.text}');
-          print('Working or not?');
+          // Removing symbools from the text.
+          String text = word.text.replaceAll(new RegExp(r'[^\w\s]+'), '');
+
+          if (isNumber(text)) {
+            questionNo = int.parse(text);
+            print(questionNo);
+          } else {
+            questionAnswer[questionNo] = text;
+          }
         }
       }
     }
+    print(questionAnswer.toString());
+  }
+
+  bool isNumber(String text) {
+    if (text == null) {
+      return false;
+    }
+    return num.tryParse(text) != null;
   }
 }
