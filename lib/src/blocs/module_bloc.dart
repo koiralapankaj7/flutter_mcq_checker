@@ -34,22 +34,24 @@ class ModuleBloc {
   Function(String) get changeGroup => _group.sink.add;
   Function(String) get changeMarker => _marker.sink.add;
 
-  List<Module> moduleList;
+  List<Module> moduleList = List<Module>();
 
   Future fetchAllModule() async {
     // Fetch all modules from the database and store into the instance variable moduleList.
     moduleList = await _dbProvider.fetchAllModule();
+    print('Length of module list is ${moduleList.length}');
     // Add module list to the sink.
     _modules.sink.add(moduleList);
   }
 
   Future<int> addModule(Module module) async {
     print('Add module called');
-    //print('No of module is ${moduleList.length}');
+    print('${moduleList == null}');
+
     // Update moduleList with new element.
-    //moduleList.add(module);
+    moduleList.add(module);
     // Add updated moduleList to the sink
-    //_modules.sink.add(moduleList);
+    _modules.sink.add(moduleList);
     print('Adding module to database.......');
     int index = await _dbProvider.addModule(module);
     print('Module has been successfully added to database $index');

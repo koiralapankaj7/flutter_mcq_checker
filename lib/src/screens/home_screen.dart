@@ -62,6 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0xff232f34),
       ),
       body: buildBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _bottomSheetCallback,
+      ),
     );
   }
 

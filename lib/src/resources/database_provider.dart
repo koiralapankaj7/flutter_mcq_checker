@@ -108,7 +108,6 @@ class DatabaseProvider {
   Future<int> addModule(Module module) async {
     Database db = await this.database;
     int result = await db.insert(_modulesTable, module.toMap());
-    print('Successfully inserted $result');
     return result;
   }
 

@@ -11,12 +11,12 @@ class AppRoutes {
       return MaterialPageRoute(
         builder: (BuildContext context) {
           final ModuleBloc bloc = ModuleProvider.of(context);
-          bloc.fetchAllModule();
 
-          // if (firstRun) {
-          //   bloc.fetchAllModule();
-          //   firstRun = false;
-          // }
+          // During the lifecycle of the application only fetch data once from database
+          if (firstRun) {
+            bloc.fetchAllModule();
+            firstRun = false;
+          }
           return HomeScreen(bloc: bloc);
         },
       );
