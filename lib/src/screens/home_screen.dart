@@ -4,6 +4,7 @@ import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/widgets/add_module_bottom_sheet.dart';
 import 'package:flutter_mcq_checker/src/widgets/module_list_tile.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatefulWidget {
   final ModuleBloc bloc;
@@ -58,13 +59,23 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('MCQ - Checker'),
-        backgroundColor: Color(0xff232f34),
+        title: Text('Modules'),
       ),
       body: buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _bottomSheetCallback,
+      floatingActionButton: floatingActionButton(),
+    );
+  }
+
+  Widget floatingActionButton() {
+    return FloatingActionButton(
+      onPressed: _bottomSheetCallback,
+      child: Icon(
+        CupertinoIcons.add,
+        color: Colors.white,
+        size: 35.0,
       ),
+      tooltip: 'Add module',
+      backgroundColor: Colors.green,
     );
   }
 
@@ -73,9 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: widget.bloc.modules,
       builder: (BuildContext context, AsyncSnapshot<List<Module>> snapshot) {
         if (!snapshot.hasData) {
-          return Center(
-            child: addModule(),
-          );
+          return dataUnAvailable();
         }
         return ListView.builder(
           padding: EdgeInsets.all(8.0),
@@ -85,6 +94,44 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget dataUnAvailable() {
+    final String image = 'assets/images/no_data.svg';
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 300.0,
+            height: 300.0,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(200.0),
+            ),
+            alignment: Alignment.center,
+            child: Center(
+              child: SvgPicture.asset(
+                image,
+                width: 200,
+                height: 200,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          SizedBox(height: 20.0),
+          Text(
+            'No data to display',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w100,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 

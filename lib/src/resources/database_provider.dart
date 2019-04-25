@@ -101,6 +101,12 @@ class DatabaseProvider {
 
       return moduleList;
     }
+
+    // Return empty list insted of null.
+    // This method will called while running application at the beginning
+    // If we return null then we cannot use ModuleList to update its value because
+    // ModuleList will be set as null
+    // In ModuleBloc while adding module ModuleList shouldnt be null
     return null;
   }
 

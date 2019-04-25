@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import '../models/student.dart';
@@ -18,6 +19,16 @@ class ResultScreen extends StatelessWidget {
         actions: <Widget>[
           Icon(Icons.more_vert),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(
+          CupertinoIcons.photo_camera,
+          color: Colors.white,
+          size: 35.0,
+        ),
+        tooltip: 'Scan answer',
+        backgroundColor: Colors.green,
       ),
       body: ListView.builder(
         itemCount: 10,
