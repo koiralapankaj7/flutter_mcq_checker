@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
+import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
@@ -9,7 +11,8 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 class AddModule extends StatelessWidget {
   final BuildContext context;
   final GlobalKey<ScaffoldState> scaffold;
-  AddModule({this.scaffold, this.context});
+  final ModuleBloc bloc;
+  AddModule({this.scaffold, this.context, this.bloc});
 
   //
   //
@@ -315,9 +318,9 @@ class AddModule extends StatelessWidget {
 
   Widget btnAdd() {
     return InkWell(
-      onTap: () {
-        print('Add Module');
-        processImage();
+      onTap: () async {
+        Module module = Module('Programming', 1, 2, 'C2', 'Pankaj', [], []);
+        await bloc.addModule(module);
       },
       child: Container(
         height: 60.0,
@@ -339,8 +342,6 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  File pickedImage;
-
   Future pickImage() async {
     try {
       final File file =
@@ -351,9 +352,7 @@ class AddModule extends StatelessWidget {
         throw Exception("File is not available");
       }
 
-      pickedImage = file;
-
-      processImage();
+      processImage(file);
     } catch (e) {
       scaffold.currentState.showSnackBar(
         SnackBar(
@@ -363,9 +362,9 @@ class AddModule extends StatelessWidget {
     }
   }
 
-  Future processImage() async {
+  Future processImage(File file) async {
     print("Processing image....");
-    FirebaseVisionImage image = FirebaseVisionImage.fromFile(pickedImage);
+    FirebaseVisionImage image = FirebaseVisionImage.fromFile(file);
     TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
     VisionText text = await textRecognizer.processImage(image);
 

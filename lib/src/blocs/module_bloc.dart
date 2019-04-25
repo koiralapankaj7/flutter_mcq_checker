@@ -8,12 +8,14 @@ class ModuleBloc {
 
   // Stream Controller / Subjects
   final PublishSubject<List<Module>> _modules = PublishSubject();
-  final BehaviorSubject<String> _moduleName = BehaviorSubject();
-  final BehaviorSubject<int> _year = BehaviorSubject();
-  final BehaviorSubject<int> _sem = BehaviorSubject();
-  final BehaviorSubject<String> _group = BehaviorSubject();
-  final BehaviorSubject<String> _marker = BehaviorSubject();
-  final BehaviorSubject<List<String>> _answers = BehaviorSubject();
+  final BehaviorSubject<String> _moduleName =
+      BehaviorSubject(); // Textfield module
+  final BehaviorSubject<int> _year = BehaviorSubject(); // Textfield year
+  final BehaviorSubject<int> _sem = BehaviorSubject(); // Textfield sem
+  final BehaviorSubject<String> _group = BehaviorSubject(); // Textfield group
+  final BehaviorSubject<String> _marker = BehaviorSubject(); // Textfield marker
+  // BUtton for scanning correct answers
+  final BehaviorSubject<Map<int, String>> _answers = BehaviorSubject();
 
   // Getters to stream
   // Get all modules
@@ -23,7 +25,7 @@ class ModuleBloc {
   Observable<int> get sem => _sem.stream;
   Observable<String> get group => _group.stream;
   Observable<String> get marker => _marker.stream;
-  Observable<List<String>> get answers => _answers.stream;
+  Observable<Map<int, String>> get answers => _answers.stream;
 
   // Add to Stream Controller / Subjects
   Function(String) get changeModule => _moduleName.sink.add;
@@ -32,13 +34,27 @@ class ModuleBloc {
   Function(String) get changeGroup => _group.sink.add;
   Function(String) get changeMarker => _marker.sink.add;
 
+  List<Module> moduleList;
+
   Future fetchAllModule() async {
-    final List<Module> moduleList = await _dbProvider.fetchAllModule();
+    // Fetch all modules from the database and store into the instance variable moduleList.
+    moduleList = await _dbProvider.fetchAllModule();
+    // Add module list to the sink.
     _modules.sink.add(moduleList);
   }
 
   Future<int> addModule(Module module) async {
-    return await _dbProvider.addModule(module);
+    print('Add module called');
+    //print('No of module is ${moduleList.length}');
+    // Update moduleList with new element.
+    //moduleList.add(module);
+    // Add updated moduleList to the sink
+    //_modules.sink.add(moduleList);
+    print('Adding module to database.......');
+    int index = await _dbProvider.addModule(module);
+    print('Module has been successfully added to database $index');
+    //fetchAllModule();
+    return index;
   }
 
   // Clear db

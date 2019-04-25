@@ -11,13 +11,16 @@ class HomeScreen extends StatefulWidget {
   HomeScreen({this.bloc});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState(bloc: bloc);
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   VoidCallback _bottomSheetCallback;
   PersistentBottomSheetController _controller;
+
+  final ModuleBloc bloc;
+  _HomeScreenState({this.bloc});
 
   @override
   void initState() {
@@ -32,7 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _controller =
         _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return AddModule(scaffold: _scaffoldKey, context: context);
+      return AddModule(
+        scaffold: _scaffoldKey,
+        context: context,
+        bloc: bloc,
+      );
     });
 
     _controller.closed.whenComplete(() {
@@ -47,13 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xE6344955),
+      //backgroundColor: Color(0xE6344955),
+      backgroundColor: Colors.white,
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text('MCQ - Checker'),
         backgroundColor: Color(0xff232f34),
       ),
-      body: addModule(false),
+      body: buildBody(),
     );
   }
 
@@ -63,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context, AsyncSnapshot<List<Module>> snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: addModule(false),
+            child: addModule(),
           );
         }
         return ListView.builder(
@@ -77,33 +85,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget addModule(bool isSmall) {
-    return Container(
-      height: isSmall ? 80.0 : 250.0,
-      width: isSmall ? 80.0 : 250.0,
-      decoration: BoxDecoration(
-        color: isSmall ? Colors.green[400] : Color(0xCC232f34),
-        borderRadius: BorderRadius.circular(isSmall ? 40.0 : 125.0),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(isSmall ? 40.0 : 125.0),
-          splashColor: Color(0xff344955),
-          child: Icon(
-            CupertinoIcons.add,
-            size: isSmall ? 50.0 : 100.0,
-            color: isSmall ? Colors.white70 : Colors.white30,
+  Widget addModule() {
+    return Center(
+      child: Container(
+        height: 250.0,
+        width: 250.0,
+        decoration: BoxDecoration(
+          color: Color(0xCC232f34),
+          borderRadius: BorderRadius.circular(125.0),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(125.0),
+            splashColor: Color(0xff344955),
+            child: Icon(
+              CupertinoIcons.add,
+              size: 100.0,
+              color: Colors.white30,
+            ),
+            onTap: _bottomSheetCallback,
           ),
-          onTap: _bottomSheetCallback,
-          // () {
-          //   _scaffoldKey.currentState.showBottomSheet(
-          //     (BuildContext context) => AddModule(
-          //           scaffold: _scaffoldKey,
-          //           context: context,
-          //         ),
-          //   );
-          // },
         ),
       ),
     );

@@ -4,6 +4,7 @@ import '../screens/result_screen.dart';
 import '../blocs/module_provider.dart';
 
 class AppRoutes {
+  bool firstRun = true;
   Route routes(RouteSettings settings) {
     // Home screen
     if (settings.name == '/') {
@@ -11,6 +12,11 @@ class AppRoutes {
         builder: (BuildContext context) {
           final ModuleBloc bloc = ModuleProvider.of(context);
           bloc.fetchAllModule();
+
+          // if (firstRun) {
+          //   bloc.fetchAllModule();
+          //   firstRun = false;
+          // }
           return HomeScreen(bloc: bloc);
         },
       );
