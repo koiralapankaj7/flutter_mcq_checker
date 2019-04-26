@@ -28,7 +28,7 @@ class Module {
   static final String _columnAnswer = 'answer';
 
   Module(String module, int year, int sem, String group, String marker,
-      List<int> kids, List<int> answers)
+      List<int> kids, List<Map<int, String>> answers)
       : this.module = module,
         this.year = year,
         this.sem = sem,

@@ -49,10 +49,23 @@ class ValidationMixin {
     },
   );
 
+  // Validation for marker name
+  StreamTransformer validateMarker =
+      StreamTransformer<String, String>.fromHandlers(
+    handleData: (String marker, EventSink<String> sink) {
+      if (marker.length > 0) {
+        sink.add(marker);
+      } else {
+        sink.addError('Marker name must not be empty.');
+      }
+    },
+  );
+
   // Validation for answer
-  StreamTransformer validateAnswer =
-      StreamTransformer<Map<int, String>, Map<int, String>>.fromHandlers(
-    handleData: (Map<int, String> answer, EventSink<Map<int, String>> sink) {
+  StreamTransformer validateAnswer = StreamTransformer<List<Map<int, String>>,
+      List<Map<int, String>>>.fromHandlers(
+    handleData: (List<Map<int, String>> answer,
+        EventSink<List<Map<int, String>>> sink) {
       if (answer.isNotEmpty) {
         sink.add(answer);
       } else {
