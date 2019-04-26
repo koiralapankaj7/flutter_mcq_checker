@@ -1,14 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddModule extends StatelessWidget {
+  //
+  //
   final BuildContext context;
   final GlobalKey<ScaffoldState> scaffold;
   final ModuleBloc bloc;
@@ -18,74 +19,82 @@ class AddModule extends StatelessWidget {
   //
   @override
   Widget build(BuildContext context) {
-    final Size deviceSize = MediaQuery.of(context).size;
+    //final Size deviceSize = MediaQuery.of(context).size;
+    ScreenUtil.instance =
+        ScreenUtil(width: 828, height: 1792, allowFontScaling: true)
+          ..init(context);
 
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
         // Most back container for design
-        stackBackground(deviceSize),
+        stackBackground(),
         // Main Widget which is in middle
-        mainWidget(deviceSize),
+        mainWidget(),
         // Top widget which is used to show + within circle.
         circleWithPlus(),
       ],
     );
   }
 
-  Widget textField(String lable, String placeHolder) {
-    return TextField(
-      // User typed text stype
-      style: TextStyle(
-        fontSize: 24.0,
-        color: Colors.white70,
-        //fontWeight: FontWeight.w400,
-      ),
-      decoration: InputDecoration(
-        // Label style
-        labelText: lable,
-        labelStyle: TextStyle(
-          letterSpacing: 6.0,
-          fontSize: 18.0,
-          color: Colors.white,
-        ),
-
-        // Hint Style
-        hintText: placeHolder,
-        hintStyle: TextStyle(
-          color: Colors.white54,
-        ),
-
-        // Text Style
-        contentPadding: EdgeInsets.only(left: 16.0, top: 35.0, right: 16.0),
-
-        // Normal border Style
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(16.0),
+  Widget textField(String lable, String placeHolder, Stream<String> stream) {
+    return StreamBuilder(
+      stream: stream,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        return TextField(
+          // User typed text stype
+          style: TextStyle(
+            fontSize: ScreenUtil().setSp(35.0),
+            color: Colors.white70,
+            //fontWeight: FontWeight.w400,
           ),
-          borderSide: BorderSide(
-            style: BorderStyle.solid,
-            color: Colors.grey,
-          ),
-        ),
+          decoration: InputDecoration(
+            // Label style
+            labelText: lable,
+            labelStyle: TextStyle(
+              letterSpacing: 4.0,
+              fontSize: ScreenUtil().setSp(30.0),
+              color: Colors.white,
+            ),
 
-        // Focused Border Style
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(16.0),
+            // Hint Style
+            hintText: placeHolder,
+            hintStyle: TextStyle(
+              color: Colors.white54,
+            ),
+
+            // Text Style
+            contentPadding: EdgeInsets.only(left: 16.0, top: 35.0, right: 16.0),
+
+            // Normal border Style
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(16.0),
+              ),
+              borderSide: BorderSide(
+                style: BorderStyle.solid,
+                color: Colors.grey,
+              ),
+            ),
+
+            // Focused Border Style
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(16.0),
+              ),
+              borderSide: BorderSide(
+                color: Colors.white,
+              ),
+            ),
           ),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget stackBackground(Size deviceSize) {
+  Widget stackBackground() {
     return Container(
-      height: (deviceSize.height * 0.6) + 50.0,
+      height: ScreenUtil().setHeight((ScreenUtil.screenHeight * 0.6) + 90.0),
       decoration: BoxDecoration(
         color: Color(0xff232f34),
         borderRadius: BorderRadius.only(
@@ -96,14 +105,14 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  Widget mainWidget(Size deviceSize) {
+  Widget mainWidget() {
     return Positioned(
       bottom: 0.0,
       left: 0.0,
       right: 0.0,
       child: Container(
         padding: EdgeInsets.all(20.0),
-        height: deviceSize.height * 0.6,
+        height: ScreenUtil().setHeight(ScreenUtil.screenHeight * 0.6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0),
@@ -114,7 +123,9 @@ class AddModule extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(height: 25.0),
+            // Top margin
+            SizedBox(height: ScreenUtil().setHeight(100.0)),
+            // Form heading
             Text(
               'Add module'.toUpperCase(),
               style: TextStyle(
@@ -125,32 +136,41 @@ class AddModule extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 30.0),
-            textField('Module', 'Programming'),
-            SizedBox(height: 16.0),
+            // Top margin
+            SizedBox(height: ScreenUtil().setHeight(50.0)),
+            // Module text field
+            textField('Module', 'Programming', bloc.module),
+            // Top margin
+            SizedBox(height: ScreenUtil().setHeight(30.0)),
+            // Year, sem and group text field collection
             Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  child: textField('Year', '1st'),
-                  width: 100.0,
+                  child: textField('Year', '1st', bloc.year),
+                  width: ScreenUtil().setWidth(225.0),
                 ),
                 // SizedBox(width: 16.0),
                 Container(
-                  child: textField('Sem', '1st'),
-                  width: 100.0,
+                  child: textField('Sem', '1st', bloc.sem),
+                  width: ScreenUtil().setWidth(225.0),
                 ),
                 // SizedBox(width: 16.0),
                 Container(
-                  child: textField('Group', 'L1C2'),
-                  width: 150.0,
+                  child: textField('Group', 'L1C2', bloc.group),
+                  width: ScreenUtil().setWidth(250.0),
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
-            textField('Marker', 'Pankaj Koirala'),
-            SizedBox(height: 30.0),
+            // Top margin
+            SizedBox(height: ScreenUtil().setHeight(30.0)),
+            // Marker text field
+            textField('Marker', 'Pankaj Koirala', bloc.marker),
+            // Top margin
+            SizedBox(height: ScreenUtil().setHeight(50.0)),
+            // Button scan correct answer
             btnAttachAnswer(),
+            // Button add module
             btnAdd(),
           ],
         ),
@@ -158,10 +178,11 @@ class AddModule extends StatelessWidget {
     );
   }
 
+  // Circular design with plus icon
   Widget circleWithPlus() {
     return Container(
-      height: 80.0,
-      width: 80.0,
+      height: ScreenUtil().setHeight(180.0),
+      width: ScreenUtil().setWidth(180.0),
       decoration: BoxDecoration(
         color: Color(0xff232f34),
         borderRadius: BorderRadius.circular(40.0),
@@ -180,6 +201,7 @@ class AddModule extends StatelessWidget {
     );
   }
 
+  // Scan correct answer button
   Widget btnAttachAnswer() {
     return InkWell(
       onTap: () {
@@ -191,7 +213,7 @@ class AddModule extends StatelessWidget {
         );
       },
       child: Container(
-        height: 60.0,
+        height: ScreenUtil().setHeight(100.0),
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
         decoration: BoxDecoration(
@@ -210,15 +232,16 @@ class AddModule extends StatelessWidget {
     );
   }
 
+  // Scanning type displaying dialog i.e, camer or gallery
   Widget buildDialog() {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        height: 200.0,
+        height: ScreenUtil().setHeight(400.0),
         child: Column(
           children: <Widget>[
             Container(
-              height: 60.0,
+              height: ScreenUtil().setHeight(120.0),
               width: double.maxFinite,
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -316,6 +339,7 @@ class AddModule extends StatelessWidget {
     );
   }
 
+  // Add module button
   Widget btnAdd() {
     return InkWell(
       onTap: () async {
@@ -323,7 +347,7 @@ class AddModule extends StatelessWidget {
         await bloc.addModule(module);
       },
       child: Container(
-        height: 60.0,
+        height: ScreenUtil().setHeight(100.0),
         alignment: Alignment.center,
         margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
         decoration: BoxDecoration(
@@ -342,6 +366,7 @@ class AddModule extends StatelessWidget {
     );
   }
 
+  // Function to pick image
   Future pickImage() async {
     try {
       final File file =
@@ -362,6 +387,7 @@ class AddModule extends StatelessWidget {
     }
   }
 
+  // Function for fetching text from image
   Future processImage(File file) async {
     print("Processing image....");
     FirebaseVisionImage image = FirebaseVisionImage.fromFile(file);
@@ -389,6 +415,7 @@ class AddModule extends StatelessWidget {
     print(questionAnswer.toString());
   }
 
+  // Function which check either string is number or not
   bool isNumber(String text) {
     if (text == null) {
       return false;
