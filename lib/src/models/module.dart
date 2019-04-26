@@ -22,7 +22,7 @@ class Module {
   static final String _columnModule = 'module';
   static final String _columnYear = 'year';
   static final String _columnSem = 'sem';
-  static final String _columnGroup = 'sgroup';
+  static final String _columnGroup = 'sGroup';
   static final String _columnMarker = 'marker';
   static final String _columnKids = 'kids';
   static final String _columnAnswer = 'answer';

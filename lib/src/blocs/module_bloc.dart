@@ -98,18 +98,18 @@ class ModuleBloc with ValidationMixin {
   }
 
   // Add module button submit action
-  submit() {
+  submit() async {
     final String moduleName = _moduleName.value;
     final int year = int.parse(_year.value);
     final int sem = int.parse(_sem.value);
-    final String group = _sem.value;
+    final String group = _group.value;
     final String marker = _marker.value;
     final List<int> kids = [];
     final List<Map<int, String>> answers = _answers.value;
 
     Module module = Module(moduleName, year, sem, group, marker, kids, answers);
 
-    addModule(module);
+    await addModule(module);
   }
 
   // Clear db

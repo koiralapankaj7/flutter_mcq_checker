@@ -31,7 +31,7 @@ class ModuleListTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '${module.group} / Sem ${module.sem} / ${module.year}',
+          'Group ${module.group} / Sem ${module.sem} / ${module.year}',
           style: TextStyle(
             color: Colors.white70,
           ),

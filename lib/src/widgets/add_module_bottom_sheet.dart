@@ -37,11 +37,13 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  Widget textField(String lable, String placeHolder, Stream<String> stream) {
+  Widget textField(String lable, String placeHolder, Stream<String> stream,
+      Function(String) onChanged) {
     return StreamBuilder(
       stream: stream,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return TextField(
+          onChanged: onChanged,
           // User typed text stype
           style: TextStyle(
             fontSize: ScreenUtil().setSp(35.0),
@@ -62,6 +64,8 @@ class AddModule extends StatelessWidget {
             hintStyle: TextStyle(
               color: Colors.white54,
             ),
+
+            errorText: snapshot.error,
 
             // Text Style
             contentPadding: EdgeInsets.only(left: 16.0, top: 35.0, right: 16.0),
@@ -139,7 +143,7 @@ class AddModule extends StatelessWidget {
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Module text field
-            textField('Module', 'Programming', bloc.module),
+            textField('Module', 'Programming', bloc.module, bloc.changeModule),
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(30.0)),
             // Year, sem and group text field collection
@@ -147,17 +151,18 @@ class AddModule extends StatelessWidget {
               alignment: WrapAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  child: textField('Year', '1st', bloc.year),
+                  child: textField('Year', '1st', bloc.year, bloc.changeYear),
                   width: ScreenUtil().setWidth(225.0),
                 ),
                 // SizedBox(width: 16.0),
                 Container(
-                  child: textField('Sem', '1st', bloc.sem),
+                  child: textField('Sem', '1st', bloc.sem, bloc.changeSem),
                   width: ScreenUtil().setWidth(225.0),
                 ),
                 // SizedBox(width: 16.0),
                 Container(
-                  child: textField('Group', 'L1C2', bloc.group),
+                  child:
+                      textField('Group', 'L1C2', bloc.group, bloc.changeGroup),
                   width: ScreenUtil().setWidth(250.0),
                 ),
               ],
@@ -165,7 +170,8 @@ class AddModule extends StatelessWidget {
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(30.0)),
             // Marker text field
-            textField('Marker', 'Pankaj Koirala', bloc.marker),
+            textField(
+                'Marker', 'Pankaj Koirala', bloc.marker, bloc.changeMarker),
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Button scan correct answer
@@ -341,28 +347,30 @@ class AddModule extends StatelessWidget {
 
   // Add module button
   Widget btnAdd() {
-    return InkWell(
-      onTap: () async {
-        Module module = Module('Programming', 1, 2, 'C2', 'Pankaj', [], []);
-        await bloc.addModule(module);
-      },
-      child: Container(
-        height: ScreenUtil().setHeight(100.0),
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Text(
-          'Add Module'.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.black,
+    return StreamBuilder(
+      stream: bloc.addModuleValidation,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return InkWell(
+          onTap: snapshot.hasData ? bloc.submit : null,
+          child: Container(
+            height: ScreenUtil().setHeight(100.0),
+            alignment: Alignment.center,
+            margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.white70,
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: Text(
+              'Add Module'.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
