@@ -18,6 +18,7 @@ class Module {
   // Map of correct answers. <questionNo, Answer>
   final List<dynamic> answer;
 
+  // Columns in database
   static final String _columnId = 'id';
   static final String _columnModule = 'module';
   static final String _columnYear = 'year';
