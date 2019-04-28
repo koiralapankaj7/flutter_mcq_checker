@@ -16,7 +16,7 @@ class Module {
   // List of students id
   final List<dynamic> kids;
   // Map of correct answers. <questionNo, Answer>
-  final List<dynamic> answer;
+  final List<dynamic> answers;
 
   // Columns in database
   static final String _columnId = 'id';
@@ -28,15 +28,18 @@ class Module {
   static final String _columnKids = 'kids';
   static final String _columnAnswer = 'answer';
 
-  Module(String module, int year, int sem, String group, String marker,
-      List<int> kids, List<Map<int, String>> answers)
-      : this.module = module,
-        this.year = year,
-        this.sem = sem,
-        this.group = group,
-        this.marker = marker,
-        this.kids = kids,
-        this.answer = answers;
+  // Module(String module, int year, int sem, String group, String marker,
+  //     List<int> kids, List<Map<int, String>> answers)
+  //     : this.module = module,
+  //       this.year = year,
+  //       this.sem = sem,
+  //       this.group = group,
+  //       this.marker = marker,
+  //       this.kids = kids,
+  //       this.answer = answers;
+
+  Module(this.module, this.year, this.sem, this.group, this.marker, this.kids,
+      this.answers);
 
   // to get data from database
   Module.fromDb(Map<String, dynamic> parsedJson)
@@ -47,7 +50,7 @@ class Module {
         group = parsedJson[_columnGroup],
         marker = parsedJson[_columnMarker],
         kids = jsonDecode(parsedJson[_columnKids]),
-        answer = jsonDecode(parsedJson[_columnAnswer]);
+        answers = jsonDecode(parsedJson[_columnAnswer]);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -57,7 +60,7 @@ class Module {
       _columnGroup: group,
       _columnMarker: marker,
       _columnKids: jsonEncode(kids),
-      _columnAnswer: jsonEncode(answer),
+      _columnAnswer: jsonEncode(answers),
     };
   }
 }

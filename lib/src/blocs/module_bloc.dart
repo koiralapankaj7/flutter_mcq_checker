@@ -113,8 +113,8 @@ class ModuleBloc with ValidationMixin {
   }
 
   // Clear db
-  clear() {
-    return _dbProvider.clear();
+  clearModule() {
+    return _dbProvider.clearModule();
   }
 
   // Dispose all subject / Stream controller

@@ -111,26 +111,6 @@ class DatabaseProvider {
     return null;
   }
 
-  // Fetch all Students
-  Future<List<Student>> fetchAllStudent() async {
-    Database db = await this.database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      _studentsTable,
-      columns: null,
-    );
-
-    if (maps.length > 0) {
-      List<Student> studentList = [];
-      maps.forEach((Map<String, dynamic> row) {
-        studentList.add(Student.fromDb(row));
-      });
-
-      return studentList;
-    }
-
-    return null;
-  }
-
   // Add module
   Future<int> addModule(Module module) async {
     Database db = await this.database;
@@ -160,8 +140,62 @@ class DatabaseProvider {
   }
 
   // Clear Module Table
-  Future<int> clear() async {
+  Future<int> clearModule() async {
     Database db = await this.database;
     return db.delete(_modulesTable);
+  }
+
+  // Fetch all Students
+  Future<List<Student>> fetchAllStudent() async {
+    Database db = await this.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _studentsTable,
+      columns: null,
+    );
+
+    if (maps.length > 0) {
+      List<Student> studentList = [];
+      maps.forEach((Map<String, dynamic> row) {
+        studentList.add(Student.fromDb(row));
+      });
+
+      return studentList;
+    }
+
+    return null;
+  }
+
+  // Add student
+  Future<int> addStudent(Student student) async {
+    Database db = await this.database;
+    int result = await db.insert(_studentsTable, student.toMap());
+    return result;
+  }
+
+  // Delete student
+  Future<int> deleteStudent(int id) async {
+    Database db = await this.database;
+    return db.delete(
+      _studentsTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Update Student
+  Future<int> updateStudent(Student student) async {
+    Database db = await this.database;
+    return await db.update(
+      _studentsTable,
+      student.toMap(),
+      where: "id = ?",
+      whereArgs: [student.id],
+    );
+  }
+
+  // Clear Student Table
+  Future<int> clearStudent() async {
+    Database db = await this.database;
+    return db.delete(_studentsTable);
   }
 }
