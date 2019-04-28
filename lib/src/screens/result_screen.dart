@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/student_bloc.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
+import 'package:flutter_mcq_checker/src/models/student.dart';
+import 'package:flutter_mcq_checker/src/widgets/data_unavailable.dart';
 import 'package:flutter_mcq_checker/src/widgets/student_list_tile.dart';
 
 class ResultScreen extends StatelessWidget {
   final Module module;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final StudentBloc bloc;
 
-  ResultScreen({this.module});
+  ResultScreen({this.module, this.bloc});
 
   @override
   Widget build(BuildContext context) {
@@ -20,26 +24,39 @@ class ResultScreen extends StatelessWidget {
           Icon(Icons.more_vert),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(
-          CupertinoIcons.photo_camera,
-          color: Colors.white,
-          size: 35.0,
-        ),
-        tooltip: 'Scan answer',
-        backgroundColor: Colors.green,
-      ),
-      body: ListView.builder(
-        itemCount: 10,
-        padding: EdgeInsets.all(8.0),
-        itemBuilder: (BuildContext context, int index) {
-          if (index == 0) {
-            return header();
-          }
-          return StudentListTile(index: index, scaffold: _scaffoldKey);
-        },
-      ),
+      floatingActionButton: floatingActionButton(),
+      body: buildBody(),
+      // ListView.builder(
+      //   itemCount: 10,
+      //   padding: EdgeInsets.all(8.0),
+      //   itemBuilder: (BuildContext context, int index) {
+      //     if (index == 0) {
+      //       return header();
+      //     }
+      //     return StudentListTile(index: index, scaffold: _scaffoldKey);
+      //   },
+      // ),
+    );
+  }
+
+  Widget buildBody() {
+    return StreamBuilder(
+      stream: bloc.students,
+      builder: (BuildContext context, AsyncSnapshot<List<Student>> snapshot) {
+        if (!snapshot.hasData) {
+          return DataUnavailable();
+        }
+        return ListView.builder(
+          padding: EdgeInsets.all(8.0),
+          itemCount: snapshot.data.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return header();
+            }
+            return StudentListTile(index: index, scaffold: _scaffoldKey);
+          },
+        );
+      },
     );
   }
 
@@ -77,6 +94,19 @@ class ResultScreen extends StatelessWidget {
           SizedBox(height: 24.0),
         ],
       ),
+    );
+  }
+
+  Widget floatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {},
+      child: Icon(
+        CupertinoIcons.add,
+        color: Colors.white,
+        size: 35.0,
+      ),
+      tooltip: 'Add module',
+      backgroundColor: Colors.green,
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/student_bloc_provider.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/screens/student_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../screens/home_screen.dart';
 import '../screens/result_screen.dart';
 import '../blocs/module_provider.dart';
@@ -26,6 +28,11 @@ class AppRoutes {
   MaterialPageRoute openHomeScreen(RouteSettings settings) {
     return MaterialPageRoute(
       builder: (BuildContext context) {
+        // Initialize ScreenUtil
+        ScreenUtil.instance =
+            ScreenUtil(width: 828, height: 1792, allowFontScaling: true)
+              ..init(context);
+
         final ModuleBloc bloc = ModuleProvider.of(context);
 
         // During the lifecycle of the application only fetch data once from database
@@ -43,9 +50,9 @@ class AppRoutes {
     return MaterialPageRoute(
       builder: (BuildContext context) {
         Module module = settings.arguments;
-        print(module);
+        StudentBloc bloc = StudentProvider.of(context);
 
-        return ResultScreen(module: module);
+        return ResultScreen(module: module, bloc: bloc);
       },
     );
   }

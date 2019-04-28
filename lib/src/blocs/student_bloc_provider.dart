@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'student_bloc.dart';
 
+export 'student_bloc.dart';
+
 class StudentProvider extends InheritedWidget {
   //
   //

@@ -19,11 +19,6 @@ class AddModule extends StatelessWidget {
   //
   @override
   Widget build(BuildContext context) {
-    //final Size deviceSize = MediaQuery.of(context).size;
-    ScreenUtil.instance =
-        ScreenUtil(width: 828, height: 1792, allowFontScaling: true)
-          ..init(context);
-
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
