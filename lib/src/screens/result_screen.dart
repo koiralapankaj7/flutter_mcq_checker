@@ -17,12 +17,10 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(module.module),
-        actions: <Widget>[
-          Icon(Icons.more_vert),
-        ],
+        actions: actions(),
       ),
       floatingActionButton: floatingActionButton(),
       body: buildBody(),
@@ -37,6 +35,41 @@ class ResultScreen extends StatelessWidget {
       //   },
       // ),
     );
+  }
+
+  List<Widget> actions() {
+    return <Widget>[
+      PopupMenuButton(
+        icon: Icon(Icons.scanner),
+        onSelected: (result) {},
+        itemBuilder: (BuildContext context) {
+          return <PopupMenuItem>[
+            PopupMenuItem(
+              value: 'gallery',
+              child: Text('Gallery'),
+            ),
+            PopupMenuItem(
+              value: 'camera',
+              child: Text('Camera'),
+            ),
+          ];
+        },
+      ),
+      PopupMenuButton(
+        icon: Icon(Icons.more_vert),
+        onSelected: (result) {
+          Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');
+        },
+        itemBuilder: (BuildContext context) {
+          return <PopupMenuEntry>[
+            PopupMenuItem(
+              value: 'edit',
+              child: Text('Edit Answers'),
+            ),
+          ];
+        },
+      ),
+    ];
   }
 
   Widget buildBody() {
@@ -101,7 +134,7 @@ class ResultScreen extends StatelessWidget {
     return FloatingActionButton(
       onPressed: () {},
       child: Icon(
-        CupertinoIcons.add,
+        CupertinoIcons.photo_camera,
         color: Colors.white,
         size: 35.0,
       ),

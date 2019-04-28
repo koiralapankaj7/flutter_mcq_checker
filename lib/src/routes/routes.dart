@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/student_bloc_provider.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
+import 'package:flutter_mcq_checker/src/screens/edit_answer_screen.dart';
 import 'package:flutter_mcq_checker/src/screens/student_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../screens/home_screen.dart';
@@ -19,6 +20,8 @@ class AppRoutes {
       return openResultScreen(settings);
     } else if (settings.name.startsWith('studentScreen')) {
       return openStudentScreen(settings);
+    } else if (settings.name.startsWith('editAnswers')) {
+      return openEditAnswerScreen(settings);
     } else {
       throw new Exception('Invalid route: ${settings.name}');
     }
@@ -51,7 +54,7 @@ class AppRoutes {
       builder: (BuildContext context) {
         Module module = settings.arguments;
         StudentBloc bloc = StudentProvider.of(context);
-
+        bloc.fetchAllStudent();
         return ResultScreen(module: module, bloc: bloc);
       },
     );
@@ -65,6 +68,15 @@ class AppRoutes {
       },
     );
   }
+}
+
+// Edit Answers Page
+MaterialPageRoute openEditAnswerScreen(RouteSettings settings) {
+  return MaterialPageRoute(
+    builder: (BuildContext context) {
+      return EditAnswerScreen();
+    },
+  );
 }
 
 final AppRoutes appRoutes = AppRoutes();
