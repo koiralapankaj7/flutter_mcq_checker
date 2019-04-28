@@ -1,3 +1,4 @@
+import 'package:flutter_mcq_checker/src/models/student.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -78,12 +79,12 @@ class DatabaseProvider {
           (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
-            score INTEGER
+            answers BLOB
           )
           """;
   }
 
-  // Fetch All Module
+  // Fetch All Modules
   Future<List<Module>> fetchAllModule() async {
     print("Fetch all module called from db provider");
 
@@ -107,6 +108,26 @@ class DatabaseProvider {
     // If we return null then we cannot use ModuleList to update its value because
     // ModuleList will be set as null
     // In ModuleBloc while adding module ModuleList shouldnt be null
+    return null;
+  }
+
+  // Fetch all Students
+  Future<List<Student>> fetchAllStudent() async {
+    Database db = await this.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _studentsTable,
+      columns: null,
+    );
+
+    if (maps.length > 0) {
+      List<Student> studentList = [];
+      maps.forEach((Map<String, dynamic> row) {
+        studentList.add(Student.fromDb(row));
+      });
+
+      return studentList;
+    }
+
     return null;
   }
 

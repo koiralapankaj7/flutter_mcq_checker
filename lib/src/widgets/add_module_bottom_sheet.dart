@@ -415,11 +415,15 @@ class AddModule extends StatelessWidget {
             questionNo = int.parse(text);
             print(questionNo);
           } else {
+            // Set answer for question number
             questionAnswer[questionNo] = text;
           }
         }
       }
     }
+
+    List<Map<int, String>> answerList = [questionAnswer];
+    bloc.changeAnswer(answerList);
     print(questionAnswer.toString());
   }
 
