@@ -82,14 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
       _bottomSheetCallback = null;
     });
 
-    _controller =
-        _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return AddModule(
-        scaffold: _scaffoldKey,
-        context: context,
-        bloc: bloc,
-      );
-    });
+    _controller = _scaffoldKey.currentState.showBottomSheet(
+      (BuildContext context) {
+        return AddModuleBottomSheet(
+          scaffold: _scaffoldKey,
+          bloc: bloc,
+        );
+      },
+    );
 
     _controller.closed.whenComplete(() {
       if (mounted) {

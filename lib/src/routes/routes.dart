@@ -74,9 +74,9 @@ class AppRoutes {
 MaterialPageRoute openEditAnswerScreen(RouteSettings settings) {
   return MaterialPageRoute(
     builder: (BuildContext context) {
-      //Map<int, String> questionAnswer = settings.arguments;
+      Map<int, String> questionAnswer = settings.arguments;
       ModuleBloc bloc = ModuleProvider.of(context);
-      return EditAnswerScreen(bloc: bloc);
+      return EditAnswerScreen(bloc: bloc, answers: questionAnswer);
     },
   );
 }

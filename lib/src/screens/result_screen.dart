@@ -41,22 +41,6 @@ class ResultScreen extends StatelessWidget {
   List<Widget> actions() {
     return <Widget>[
       PopupMenuButton(
-        icon: Icon(Icons.scanner),
-        onSelected: (result) {},
-        itemBuilder: (BuildContext context) {
-          return <PopupMenuItem>[
-            PopupMenuItem(
-              value: 'gallery',
-              child: Text('Gallery'),
-            ),
-            PopupMenuItem(
-              value: 'camera',
-              child: Text('Camera'),
-            ),
-          ];
-        },
-      ),
-      PopupMenuButton(
         icon: Icon(Icons.more_vert),
         onSelected: (result) {
           Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');
@@ -64,8 +48,16 @@ class ResultScreen extends StatelessWidget {
         itemBuilder: (BuildContext context) {
           return <PopupMenuEntry>[
             PopupMenuItem(
+              value: 'scan',
+              child: Text('Scan answers'),
+            ),
+            PopupMenuItem(
+              value: 'add',
+              child: Text('Add answers'),
+            ),
+            PopupMenuItem(
               value: 'edit',
-              child: Text('Edit Answers'),
+              child: Text('Edit answers'),
             ),
           ];
         },

@@ -1,19 +1,15 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
-import 'package:flutter_mcq_checker/src/models/module.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter_mcq_checker/src/widgets/scan_answers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddModule extends StatelessWidget {
+class AddModuleBottomSheet extends StatelessWidget {
   //
   //
-  final BuildContext context;
   final GlobalKey<ScaffoldState> scaffold;
   final ModuleBloc bloc;
-  AddModule({this.scaffold, this.context, this.bloc});
+  AddModuleBottomSheet({this.scaffold, this.bloc});
 
   //
   //
@@ -27,7 +23,7 @@ class AddModule extends StatelessWidget {
         // Main Widget which is in middle
         mainWidget(),
         // Top widget which is used to show + within circle.
-        circleWithPlus(),
+        bottomSheetLogo(),
       ],
     );
   }
@@ -170,49 +166,59 @@ class AddModule extends StatelessWidget {
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Button scan correct answer
-            //btnAttachAnswer(),
-            attachAnswer(),
+            scanAnswer(),
             SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Button add module
-            btnAdd(),
+            btnAddModule(),
           ],
         ),
       ),
     );
   }
 
-  Widget attachAnswer() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Scan correct answers',
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.end,
+  Widget scanAnswer() {
+    return StreamBuilder(
+      stream: bloc.answers,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return Row(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 32.0, top: 16.0, right: 16.0, bottom: 16.0),
+                child: Text(
+                  snapshot.hasData
+                      ? 'Scanned successfully'
+                      : 'Scan correct answers. You can scan answers later as well.',
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.end,
+                ),
+              ),
             ),
-          ),
-        ),
-        CircleAvatar(
-          child: IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return buildDialog();
+            CircleAvatar(
+              child: IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: scaffold.currentContext,
+                    builder: (BuildContext context) {
+                      return ScanAnswers(
+                        scaffold: scaffold,
+                        bloc: bloc,
+                      );
+                    },
+                  );
                 },
-              );
-            },
-            icon: Icon(Icons.scanner),
-          ),
-        ),
-      ],
+                icon: Icon(snapshot.hasData ? Icons.done : Icons.scanner),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   // Add module button
-  Widget btnAdd() {
+  Widget btnAddModule() {
     return StreamBuilder(
       stream: bloc.addModuleValidation,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -243,177 +249,8 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  // Scanning type displaying dialog i.e, camer or gallery
-  Widget buildDialog() {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        height: ScreenUtil().setHeight(400.0),
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: ScreenUtil().setHeight(120.0),
-              width: double.maxFinite,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0),
-                ),
-              ),
-              child: Text(
-                'Scan answer using',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w100,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircleAvatar(
-                          minRadius: 30.0,
-                          child: IconButton(
-                            padding: EdgeInsets.only(bottom: 4.0),
-                            icon: Icon(
-                              CupertinoIcons.photo_camera,
-                              size: 40.0,
-                            ),
-                            onPressed: () {
-                              print('Camera');
-                              pickImage();
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Camera",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircleAvatar(
-                          minRadius: 30.0,
-                          child: IconButton(
-                            padding: EdgeInsets.only(bottom: 4.0),
-                            icon: Icon(
-                              CupertinoIcons.folder,
-                              size: 35.0,
-                            ),
-                            onPressed: () {
-                              print('Gallery');
-                              pickImage();
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Gallery",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Function to pick image
-  Future pickImage() async {
-    try {
-      final File file =
-          await ImagePicker.pickImage(source: ImageSource.gallery);
-      Navigator.pop(context);
-
-      if (file == null) {
-        throw Exception("File is not available");
-      }
-
-      processImage(file);
-    } catch (e) {
-      scaffold.currentState.showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  // Function for fetching text from image
-  Future processImage(File file) async {
-    print("Processing image....");
-    FirebaseVisionImage image = FirebaseVisionImage.fromFile(file);
-    TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
-    VisionText text = await textRecognizer.processImage(image);
-
-    Map<int, String> questionAnswer = Map();
-    int questionNo;
-
-    for (TextBlock block in text.blocks) {
-      for (TextLine textLine in block.lines) {
-        for (TextElement word in textLine.elements) {
-          // Removing symbools from the text.
-          String text = word.text.replaceAll(new RegExp(r'[^\w\s]+'), '');
-
-          if (isNumber(text)) {
-            questionNo = int.parse(text);
-            print(questionNo);
-          } else {
-            // Set answer for question number
-            questionAnswer[questionNo] = text;
-          }
-        }
-      }
-    }
-
-    // List<Map<int, String>> answerList = [questionAnswer];
-    bloc.changeAnswer(questionAnswer);
-    Navigator.of(context).pushNamed('editAnswers');
-    print(questionAnswer.toString());
-  }
-
-  // Function which check either string is number or not
-  bool isNumber(String text) {
-    if (text == null) {
-      return false;
-    }
-    return num.tryParse(text) != null;
-  }
-
   // Circular design with plus icon
-  Widget circleWithPlus() {
+  Widget bottomSheetLogo() {
     return Container(
       height: ScreenUtil().setHeight(180.0),
       width: ScreenUtil().setWidth(180.0),

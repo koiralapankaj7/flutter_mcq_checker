@@ -3,7 +3,8 @@ import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
 
 class EditAnswerScreen extends StatefulWidget {
   final ModuleBloc bloc;
-  EditAnswerScreen({this.bloc});
+  final Map<int, String> answers;
+  EditAnswerScreen({this.bloc, this.answers});
 
   @override
   _EditAnswerScreenState createState() => _EditAnswerScreenState();
