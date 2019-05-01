@@ -62,10 +62,9 @@ class ValidationMixin {
   );
 
   // Validation for answer
-  StreamTransformer validateAnswer = StreamTransformer<List<Map<int, String>>,
-      List<Map<int, String>>>.fromHandlers(
-    handleData: (List<Map<int, String>> answer,
-        EventSink<List<Map<int, String>>> sink) {
+  StreamTransformer validateAnswer =
+      StreamTransformer<Map<int, String>, Map<int, String>>.fromHandlers(
+    handleData: (Map<int, String> answer, EventSink<Map<int, String>> sink) {
       if (answer.isNotEmpty) {
         sink.add(answer);
       } else {

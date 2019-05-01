@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
 
 class EditAnswerScreen extends StatefulWidget {
+  final ModuleBloc bloc;
+  EditAnswerScreen({this.bloc});
+
   @override
   _EditAnswerScreenState createState() => _EditAnswerScreenState();
 }
@@ -9,19 +13,11 @@ class EditAnswerScreen extends StatefulWidget {
 
 class _EditAnswerScreenState extends State<EditAnswerScreen>
     with TickerProviderStateMixin {
-  final answers = ['A', 'D', 'B', 'C', 'AB', 'C', 'D', 'B', 'A', 'CB'];
-
   List<AnimationController> controllerList = [];
   List<Animation> animationList = [];
 
-  @override
-  void initState() {
-    super.initState();
-    initAnimation();
-  }
-
-  initAnimation() {
-    for (var i = 0; i < answers.length; i++) {
+  initAnimation(int length) {
+    for (var i = 0; i < length; i++) {
       AnimationController controller = AnimationController(
         vsync: this,
         duration: Duration(milliseconds: 300),
@@ -30,7 +26,7 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
       controllerList.add(controller);
     }
 
-    for (var i = 0; i < answers.length; i++) {
+    for (var i = 0; i < length; i++) {
       Animation animation = Tween(begin: 40.0, end: 200.0).animate(
         CurvedAnimation(
           curve: Curves.easeInOut,
@@ -49,26 +45,43 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
       appBar: AppBar(
         title: Text('Edit answer'),
       ),
-      body: ListView.builder(
-        itemCount: answers.length,
-        padding: EdgeInsets.all(8.0),
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            color: Colors.grey,
-            margin: EdgeInsets.only(bottom: 2.0),
-            child: ListTile(
-              leading: CircleAvatar(
-                child: Text('${index + 1}'),
-              ),
-              title: Text(
-                '${answers[index]}',
-                style: TextStyle(color: Colors.white),
-              ),
-              trailing: revealTextEditor(index),
-            ),
-          );
+      body: StreamBuilder(
+        stream: widget.bloc.answers,
+        builder:
+            (BuildContext context, AsyncSnapshot<Map<int, String>> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return buildBody(snapshot.data);
         },
       ),
+    );
+  }
+
+  Widget buildBody(Map<int, String> questionAnswers) {
+    initAnimation(questionAnswers.length);
+
+    return ListView.builder(
+      itemCount: questionAnswers.length,
+      padding: EdgeInsets.all(8.0),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          color: Colors.grey,
+          margin: EdgeInsets.only(bottom: 2.0),
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Text('${questionAnswers.keys.toList()[index]}'),
+            ),
+            title: Text(
+              '${questionAnswers.values.toList()[index]}',
+              style: TextStyle(color: Colors.white),
+            ),
+            trailing: revealTextEditor(index),
+          ),
+        );
+      },
     );
   }
 
@@ -128,6 +141,14 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
       controller.reverse();
     } else {
       controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (var controller in controllerList) {
+      controller.dispose();
     }
   }
 }

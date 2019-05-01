@@ -23,7 +23,7 @@ class ModuleBloc with ValidationMixin {
   // Stream controller / subject for marker name from text field
   final BehaviorSubject<String> _marker = BehaviorSubject();
   // Stream controller / subject for  scanning correct answers / Button
-  final BehaviorSubject<List<Map<int, String>>> _answers = BehaviorSubject();
+  final BehaviorSubject<Map<int, String>> _answers = BehaviorSubject();
   // =================STREAM CONTROLLER / SUBJECT END=============
 
   // =================GETTERS TO STREAM START=============
@@ -39,8 +39,9 @@ class ModuleBloc with ValidationMixin {
   // Get marker name from text field
   Observable<String> get marker => _marker.stream.transform(validateMarker);
   // Scan answer
-  Observable<List<Map<int, String>>> get answers =>
+  Observable<Map<int, String>> get answers =>
       _answers.stream.transform(validateAnswer);
+
   // Validation for add module button
   Observable<bool> get addModuleValidation => Observable.combineLatest5(
         module,
@@ -64,7 +65,7 @@ class ModuleBloc with ValidationMixin {
   // Add marker name to stream
   Function(String) get changeMarker => _marker.sink.add;
   // Add answer to stream
-  Function(List<Map<int, String>>) get changeAnswer => _answers.sink.add;
+  Function(Map<int, String>) get changeAnswer => _answers.sink.add;
   // =================ADD TO SINK END=============
 
   // This list will be used to display data in Module Page
@@ -105,7 +106,7 @@ class ModuleBloc with ValidationMixin {
     final String group = _group.value;
     final String marker = _marker.value;
     final List<int> kids = [];
-    final List<Map<int, String>> answers = _answers.value;
+    final List<Map<int, String>> answers = [_answers.value];
 
     Module module = Module(moduleName, year, sem, group, marker, kids, answers);
 

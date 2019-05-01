@@ -417,8 +417,9 @@ class AddModule extends StatelessWidget {
       }
     }
 
-    List<Map<int, String>> answerList = [questionAnswer];
-    bloc.changeAnswer(answerList);
+    // List<Map<int, String>> answerList = [questionAnswer];
+    bloc.changeAnswer(questionAnswer);
+    Navigator.of(context).pushNamed('editAnswers');
     print(questionAnswer.toString());
   }
 

@@ -15,6 +15,7 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //print(module.answers.first.toString());
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
