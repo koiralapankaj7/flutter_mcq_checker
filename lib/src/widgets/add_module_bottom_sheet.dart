@@ -170,7 +170,9 @@ class AddModule extends StatelessWidget {
             // Top margin
             SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Button scan correct answer
-            btnAttachAnswer(),
+            //btnAttachAnswer(),
+            attachAnswer(),
+            SizedBox(height: ScreenUtil().setHeight(50.0)),
             // Button add module
             btnAdd(),
           ],
@@ -179,57 +181,65 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  // Circular design with plus icon
-  Widget circleWithPlus() {
-    return Container(
-      height: ScreenUtil().setHeight(180.0),
-      width: ScreenUtil().setWidth(180.0),
-      decoration: BoxDecoration(
-        color: Color(0xff232f34),
-        borderRadius: BorderRadius.circular(40.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CircleAvatar(
-          backgroundColor: Color(0xff344955),
-          child: Icon(
-            CupertinoIcons.add,
-            size: 40.0,
-            color: Colors.white,
+  Widget attachAnswer() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Scan correct answers',
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.end,
+            ),
           ),
         ),
-      ),
+        CircleAvatar(
+          child: IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return buildDialog();
+                },
+              );
+            },
+            icon: Icon(Icons.scanner),
+          ),
+        ),
+      ],
     );
   }
 
-  // Scan correct answer button
-  Widget btnAttachAnswer() {
-    return InkWell(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return buildDialog();
-          },
+  // Add module button
+  Widget btnAdd() {
+    return StreamBuilder(
+      stream: bloc.addModuleValidation,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 40.0),
+          child: MaterialButton(
+            onPressed: snapshot.hasData ? bloc.submit : null,
+            height: ScreenUtil().setHeight(100.0),
+            color: Colors.blue,
+            disabledColor: Colors.grey[500],
+            disabledTextColor: Colors.black38,
+            elevation: 30.0,
+            disabledElevation: 30.0,
+            textColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            child: Text(
+              'Add Module'.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+          ),
         );
       },
-      child: Container(
-        height: ScreenUtil().setHeight(100.0),
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Text(
-          'Scan Correct Answers'.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.black,
-          ),
-        ),
-      ),
     );
   }
 
@@ -340,35 +350,6 @@ class AddModule extends StatelessWidget {
     );
   }
 
-  // Add module button
-  Widget btnAdd() {
-    return StreamBuilder(
-      stream: bloc.addModuleValidation,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return InkWell(
-          onTap: snapshot.hasData ? bloc.submit : null,
-          child: Container(
-            height: ScreenUtil().setHeight(100.0),
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: Text(
-              'Add Module'.toUpperCase(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   // Function to pick image
   Future pickImage() async {
     try {
@@ -429,5 +410,28 @@ class AddModule extends StatelessWidget {
       return false;
     }
     return num.tryParse(text) != null;
+  }
+
+  // Circular design with plus icon
+  Widget circleWithPlus() {
+    return Container(
+      height: ScreenUtil().setHeight(180.0),
+      width: ScreenUtil().setWidth(180.0),
+      decoration: BoxDecoration(
+        color: Color(0xff232f34),
+        borderRadius: BorderRadius.circular(40.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(
+          backgroundColor: Color(0xff344955),
+          child: Icon(
+            CupertinoIcons.bookmark,
+            size: 40.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }

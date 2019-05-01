@@ -51,7 +51,7 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
             (BuildContext context, AsyncSnapshot<Map<int, String>> snapshot) {
           if (!snapshot.hasData) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Text('You did not add answers for this module'),
             );
           }
           return buildBody(snapshot.data);
