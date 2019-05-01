@@ -11,8 +11,8 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
     with TickerProviderStateMixin {
   final answers = ['A', 'D', 'B', 'C', 'AB', 'C', 'D', 'B', 'A', 'CB'];
 
-  AnimationController controller;
-  Animation animation;
+  List<AnimationController> controllerList = [];
+  List<Animation> animationList = [];
 
   @override
   void initState() {
@@ -21,17 +21,25 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
   }
 
   initAnimation() {
-    controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
+    for (var i = 0; i < answers.length; i++) {
+      AnimationController controller = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 300),
+      );
 
-    animation = Tween(begin: 40.0, end: 200.0).animate(
-      CurvedAnimation(
-        curve: Curves.easeIn,
-        parent: controller,
-      ),
-    );
+      controllerList.add(controller);
+    }
+
+    for (var i = 0; i < answers.length; i++) {
+      Animation animation = Tween(begin: 40.0, end: 200.0).animate(
+        CurvedAnimation(
+          curve: Curves.easeInOut,
+          parent: controllerList[i],
+        ),
+      );
+
+      animationList.add(animation);
+    }
   }
 
   @override
@@ -65,6 +73,8 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
   }
 
   Widget revealTextEditor(int index) {
+    Animation animation = animationList[index];
+
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
@@ -94,7 +104,9 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: IconButton(
-                  onPressed: editIconPressed,
+                  onPressed: () {
+                    editIconPressed(index);
+                  },
                   icon: Icon(
                     animation.value > 50.0 ? Icons.done : Icons.edit,
                     size: 18.0,
@@ -109,7 +121,9 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
     );
   }
 
-  editIconPressed() {
+  editIconPressed(int index) {
+    AnimationController controller = controllerList[index];
+
     if (controller.status == AnimationStatus.completed) {
       controller.reverse();
     } else {
