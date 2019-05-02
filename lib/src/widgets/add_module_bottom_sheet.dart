@@ -201,10 +201,7 @@ class AddModuleBottomSheet extends StatelessWidget {
                   showDialog(
                     context: scaffold.currentContext,
                     builder: (BuildContext context) {
-                      return ScanAnswers(
-                        scaffold: scaffold,
-                        bloc: bloc,
-                      );
+                      return ScanAnswers(scaffold: scaffold);
                     },
                   );
                 },

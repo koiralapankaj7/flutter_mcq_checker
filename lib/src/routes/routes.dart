@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/student_bloc_provider.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
+import 'package:flutter_mcq_checker/src/screens/add_answers.dart';
 import 'package:flutter_mcq_checker/src/screens/edit_answer_screen.dart';
 import 'package:flutter_mcq_checker/src/screens/student_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,6 +23,8 @@ class AppRoutes {
       return openStudentScreen(settings);
     } else if (settings.name.startsWith('editAnswers')) {
       return openEditAnswerScreen(settings);
+    } else if (settings.name.startsWith('addAnswers')) {
+      return openAddAnswerScreen(settings);
     } else {
       throw new Exception('Invalid route: ${settings.name}');
     }
@@ -68,17 +71,28 @@ class AppRoutes {
       },
     );
   }
-}
 
-// Edit Answers Page
-MaterialPageRoute openEditAnswerScreen(RouteSettings settings) {
-  return MaterialPageRoute(
-    builder: (BuildContext context) {
-      Map<int, String> questionAnswer = settings.arguments;
-      ModuleBloc bloc = ModuleProvider.of(context);
-      return EditAnswerScreen(bloc: bloc, answers: questionAnswer);
-    },
-  );
+  // Edit Answers Page
+  MaterialPageRoute openEditAnswerScreen(RouteSettings settings) {
+    return MaterialPageRoute(
+      builder: (BuildContext context) {
+        Map<int, String> questionAnswer = settings.arguments;
+        ModuleBloc bloc = ModuleProvider.of(context);
+        return EditAnswerScreen(bloc: bloc, answers: questionAnswer);
+      },
+    );
+  }
+
+  // Add Answers Page
+  MaterialPageRoute openAddAnswerScreen(RouteSettings settings) {
+    return MaterialPageRoute(
+      builder: (BuildContext context) {
+        // Map<int, String> questionAnswer = settings.arguments;
+        // ModuleBloc bloc = ModuleProvider.of(context);
+        return AddAnswer();
+      },
+    );
+  }
 }
 
 final AppRoutes appRoutes = AppRoutes();

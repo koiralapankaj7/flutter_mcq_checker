@@ -4,6 +4,7 @@ import 'package:flutter_mcq_checker/src/blocs/student_bloc.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/models/student.dart';
 import 'package:flutter_mcq_checker/src/widgets/data_unavailable.dart';
+import 'package:flutter_mcq_checker/src/widgets/scan_answers.dart';
 import 'package:flutter_mcq_checker/src/widgets/student_list_tile.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -42,9 +43,7 @@ class ResultScreen extends StatelessWidget {
     return <Widget>[
       PopupMenuButton(
         icon: Icon(Icons.more_vert),
-        onSelected: (result) {
-          Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');
-        },
+        onSelected: (value) => onOptionItemSelect(value),
         itemBuilder: (BuildContext context) {
           return <PopupMenuEntry>[
             PopupMenuItem(
@@ -134,5 +133,26 @@ class ResultScreen extends StatelessWidget {
       tooltip: 'Add module',
       backgroundColor: Colors.green,
     );
+  }
+
+  void onOptionItemSelect(dynamic value) {
+    switch (value) {
+      case 'scan':
+        showDialog(
+          context: _scaffoldKey.currentContext,
+          builder: (BuildContext context) {
+            return ScanAnswers(scaffold: _scaffoldKey);
+          },
+        );
+        break;
+      case 'add':
+        Navigator.pushNamed(_scaffoldKey.currentContext, 'addAnswers');
+        break;
+      case 'edit':
+        Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');
+        break;
+      default:
+        break;
+    }
   }
 }

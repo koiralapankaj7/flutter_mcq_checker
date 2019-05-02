@@ -10,11 +10,14 @@ class ScanAnswers extends StatelessWidget {
   //
   //
   final GlobalKey<ScaffoldState> scaffold;
-  final ModuleBloc bloc;
-  ScanAnswers({this.scaffold, this.bloc});
+  ModuleBloc bloc;
+  ScanAnswers({this.scaffold});
 
   @override
   Widget build(BuildContext context) {
+    //
+    bloc = ModuleProvider.of(scaffold.currentContext);
+
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
