@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   VoidCallback _bottomSheetCallback;
   PersistentBottomSheetController _controller;
+  bool isActive = false;
 
   final ModuleBloc bloc;
   _HomeScreenState({this.bloc});
@@ -66,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget floatingActionButton() {
     return FloatingActionButton(
-      onPressed: _bottomSheetCallback,
+      onPressed: isActive ? _controller.close : _bottomSheetCallback,
       child: Icon(
-        CupertinoIcons.add,
+        isActive ? Icons.keyboard_arrow_down : Icons.add,
         color: Colors.white,
         size: 35.0,
       ),
@@ -80,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showBottomSheet() {
     setState(() {
       _bottomSheetCallback = null;
+      isActive = true;
     });
 
     _controller = _scaffoldKey.currentState.showBottomSheet(
@@ -94,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _controller.closed.whenComplete(() {
       if (mounted) {
         setState(() {
+          isActive = false;
           _bottomSheetCallback = _showBottomSheet;
         });
       }
