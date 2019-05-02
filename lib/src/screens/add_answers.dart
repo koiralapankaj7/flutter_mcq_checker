@@ -6,7 +6,8 @@ class AddAnswer extends StatefulWidget {
 }
 
 class _AddAnswerState extends State<AddAnswer> {
-  int count = 10 + 1;
+  int count = -1;
+  TextEditingController totalQuestion = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -15,45 +16,7 @@ class _AddAnswerState extends State<AddAnswer> {
       appBar: AppBar(
         title: Text('Add answers'),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: count,
-        itemBuilder: (BuildContext context, int index) {
-          // Button
-          if (index == count - 1) {
-            return Container(
-              margin: EdgeInsets.only(top: 24.0),
-              child: MaterialButton(
-                onPressed: () {},
-                color: Colors.lightBlue,
-                textColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                child: Text('Add answers'.toUpperCase()),
-              ),
-            );
-          }
-
-          return Container(
-            margin: EdgeInsets.only(bottom: 2.0),
-            color: Colors.white70,
-            child: Row(
-              children: <Widget>[
-                SizedBox(width: 16.0),
-                CircleAvatar(
-                  child: Text('${index + 1}'),
-                ),
-                SizedBox(width: 24.0),
-                option('A'),
-                option('B'),
-                option('C'),
-                option('D'),
-              ],
-            ),
-          );
-        },
-      ),
+      body: count < 0 ? askForTotalQuestion() : createAnswersSelection(),
     );
   }
 
@@ -68,6 +31,7 @@ class _AddAnswerState extends State<AddAnswer> {
                 padding: const EdgeInsets.all(24.0),
                 child: TextField(
                   keyboardType: TextInputType.number,
+                  controller: totalQuestion,
                   decoration: InputDecoration(
                     hintText: '10',
                     labelText: 'Number of questions',
@@ -78,13 +42,48 @@ class _AddAnswerState extends State<AddAnswer> {
             ),
             CircleAvatar(
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    count = int.parse(totalQuestion.text) + 1;
+                    totalQuestion.text = '';
+                  });
+                },
                 icon: Icon(Icons.add),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget createAnswersSelection() {
+    return ListView.builder(
+      padding: EdgeInsets.all(16.0),
+      itemCount: count,
+      itemBuilder: (BuildContext context, int index) {
+        // Button
+        if (index == count - 1) {
+          return buttons();
+        }
+        return Container(
+          margin: EdgeInsets.only(bottom: 2.0),
+          color: Colors.white70,
+          child: Row(
+            children: <Widget>[
+              SizedBox(width: 16.0),
+              CircleAvatar(
+                child: Text('${index + 1}'),
+              ),
+              SizedBox(width: 24.0),
+              option('A'),
+              option('B'),
+              option('C'),
+              option('D'),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -145,6 +144,41 @@ class _AddAnswerState extends State<AddAnswer> {
       child: Center(
         child: Text(option),
       ),
+    );
+  }
+
+  Widget buttons() {
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 24.0),
+          child: MaterialButton(
+            onPressed: () {},
+            color: Colors.lightBlue,
+            textColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            child: Text('Add answers'.toUpperCase()),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 8.0),
+          child: MaterialButton(
+            onPressed: () {
+              setState(() {
+                count = -1;
+              });
+            },
+            color: Colors.lightBlue,
+            textColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            child: Text('Reset'.toUpperCase()),
+          ),
+        ),
+      ],
     );
   }
 }
