@@ -1,10 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
 
 class CircleCheckBox extends StatefulWidget {
-  final String option;
-  CircleCheckBox({this.option});
+  final int questionNo;
+  final String answer;
+  CircleCheckBox({this.questionNo, this.answer});
 
   @override
   _CircleCheckBoxState createState() => _CircleCheckBoxState();
@@ -12,8 +13,13 @@ class CircleCheckBox extends StatefulWidget {
 
 class _CircleCheckBoxState extends State<CircleCheckBox>
     with TickerProviderStateMixin {
+  //
+  //
+  ModuleBloc bloc;
+  bool isSelected = false;
   AnimationController controller;
   Animation flipAnimation;
+  Map<int, String> answers = {};
 
   initAnimation() {
     controller = AnimationController(
@@ -37,6 +43,16 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
 
   @override
   Widget build(BuildContext context) {
+    //
+    bloc = ModuleProvider.of(context);
+
+    bloc.answers.listen(
+      (Map<int, String> map) {
+        answers = map;
+        return answers;
+      },
+    );
+
     return AnimatedBuilder(
       animation: controller,
       builder: (BuildContext context, Widget child) {
@@ -70,7 +86,7 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
                       ..rotateY(-pi * flipAnimation.value),
                     alignment: Alignment.center,
                     child: Text(
-                      widget.option,
+                      widget.answer,
                       style: TextStyle(
                         color: flipAnimation.value >= 0.5
                             ? Colors.white
@@ -89,9 +105,21 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
 
   void onOptionTap() {
     if (controller.status == AnimationStatus.completed) {
+      isSelected = false;
       controller.reverse();
     } else {
+      isSelected = true;
       controller.forward();
     }
+
+    if (isSelected) {
+      answers[widget.questionNo] = answers[widget.questionNo] == null
+          ? widget.answer
+          : answers[widget.questionNo] + widget.answer;
+
+      bloc.changeAnswer(answers);
+    }
+
+    print('${answers.toString()}');
   }
 }

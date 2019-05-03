@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
 import 'package:flutter_mcq_checker/src/widgets/circle_check_box.dart';
 
 class AddAnswer extends StatefulWidget {
@@ -10,15 +11,18 @@ class _AddAnswerState extends State<AddAnswer> {
   //int count = -1;
   int count = 11;
   TextEditingController totalQuestion = TextEditingController();
+  ModuleBloc bloc;
 
   @override
   Widget build(BuildContext context) {
+    bloc = ModuleProvider.of(context);
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: Text('Add answers'),
       ),
-      body: count < 0 ? askForTotalQuestion() : createAnswersSelection(),
+      body: count < 0 ? askForTotalQuestion() : setAnswers(),
     );
   }
 
@@ -59,11 +63,13 @@ class _AddAnswerState extends State<AddAnswer> {
     );
   }
 
-  Widget createAnswersSelection() {
+  Widget setAnswers() {
     return ListView.builder(
       padding: EdgeInsets.all(16.0),
       itemCount: count,
       itemBuilder: (BuildContext context, int index) {
+        final int questionNo = index + 1;
+
         // Button
         if (index == count - 1) {
           return buttons();
@@ -75,13 +81,13 @@ class _AddAnswerState extends State<AddAnswer> {
             children: <Widget>[
               SizedBox(width: 16.0),
               CircleAvatar(
-                child: Text('${index + 1}'),
+                child: Text(questionNo.toString()),
               ),
               SizedBox(width: 24.0),
-              CircleCheckBox(option: 'A'),
-              CircleCheckBox(option: 'B'),
-              CircleCheckBox(option: 'C'),
-              CircleCheckBox(option: 'D'),
+              CircleCheckBox(questionNo: questionNo, answer: 'A'),
+              CircleCheckBox(questionNo: questionNo, answer: 'B'),
+              CircleCheckBox(questionNo: questionNo, answer: 'C'),
+              CircleCheckBox(questionNo: questionNo, answer: 'D'),
             ],
           ),
         );
@@ -89,73 +95,17 @@ class _AddAnswerState extends State<AddAnswer> {
     );
   }
 
-  List<Widget> optionRow(int count) {
-    List<Widget> widgetList = [];
-
-    for (var i = 0; i < count; i++) {
-      Widget widget = Container(
-        margin: EdgeInsets.only(bottom: 2.0),
-        color: Colors.white70,
-        child: Row(
-          children: <Widget>[
-            CircleAvatar(
-              child: Text('${i + 1}'),
-            ),
-            SizedBox(width: 24.0),
-            // CircleCheckBox(option: 'A'),
-            // CircleCheckBox(option: 'B'),
-            // CircleCheckBox(option: 'C'),
-            // CircleCheckBox(option: 'D'),
-          ],
-        ),
-      );
-
-      widgetList.add(widget);
-    }
-
-    Widget margin = SizedBox(height: 24.0);
-    Widget button = MaterialButton(
-      onPressed: () {},
-      color: Colors.lightBlue,
-      textColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(50.0),
-      ),
-      child: Text('Add answers'.toUpperCase()),
-    );
-
-    widgetList.add(margin);
-    widgetList.add(button);
-
-    return widgetList;
-  }
-
-  // Widget option(String option) {
-  //   return Container(
-  //     width: 40.0,
-  //     height: 40.0,
-  //     decoration: BoxDecoration(
-  //       //color: Colors.blue,
-  //       borderRadius: BorderRadius.circular(50.0),
-  //       border: Border.all(
-  //         color: Colors.blue,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     margin: EdgeInsets.all(8.0),
-  //     child: Center(
-  //       child: Text(option),
-  //     ),
-  //   );
-  // }
-
   Widget buttons() {
     return Column(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 24.0),
           child: MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              bloc.answers.listen((map) {
+                print(map.length);
+              });
+            },
             color: Colors.lightBlue,
             textColor: Colors.white,
             shape: RoundedRectangleBorder(

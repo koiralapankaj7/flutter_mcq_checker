@@ -24,6 +24,7 @@ class ModuleBloc with ValidationMixin {
   final BehaviorSubject<String> _marker = BehaviorSubject();
   // Stream controller / subject for  scanning correct answers / Button
   final BehaviorSubject<Map<int, String>> _answers = BehaviorSubject();
+
   // =================STREAM CONTROLLER / SUBJECT END=============
 
   // =================GETTERS TO STREAM START=============
@@ -51,6 +52,7 @@ class ModuleBloc with ValidationMixin {
         marker,
         (String m, String y, String s, String g, String ma) => true,
       );
+
   // =================GETTERS TO STREAM END=============
 
   // =================ADD TO SINK START=============
@@ -66,6 +68,7 @@ class ModuleBloc with ValidationMixin {
   Function(String) get changeMarker => _marker.sink.add;
   // Add answer to stream
   Function(Map<int, String>) get changeAnswer => _answers.sink.add;
+
   // =================ADD TO SINK END=============
 
   // This list will be used to display data in Module Page
