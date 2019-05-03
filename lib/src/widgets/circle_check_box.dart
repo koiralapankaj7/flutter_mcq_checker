@@ -18,7 +18,7 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
   initAnimation() {
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: 500),
     );
 
     flipAnimation = Tween(begin: 0.0, end: 1.0).animate(
@@ -31,7 +31,6 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initAnimation();
   }
@@ -58,19 +57,27 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(50.0),
                   border: Border.all(
-                    color: Colors.blue,
+                    color: flipAnimation.value >= 0.5
+                        ? Colors.transparent
+                        : Colors.blue,
                     width: 2.0,
                   ),
                 ),
                 margin: EdgeInsets.all(8.0),
                 child: Center(
-                  child: Text(widget.option),
-                  // child: Transform.rotate(
-                  //   angle: flipAnimation.value >= 0.5
-                  //       ? 3 * pi * flipAnimation.value
-                  //       : 0.0,
-                  //   child: Text(widget.option),
-                  // ),
+                  child: Transform(
+                    transform: Matrix4.identity()
+                      ..rotateY(-pi * flipAnimation.value),
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.option,
+                      style: TextStyle(
+                        color: flipAnimation.value >= 0.5
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -81,7 +88,6 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
   }
 
   void onOptionTap() {
-    print('Clicked');
     if (controller.status == AnimationStatus.completed) {
       controller.reverse();
     } else {
