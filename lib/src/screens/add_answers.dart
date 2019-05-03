@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/widgets/circle_check_box.dart';
 
 class AddAnswer extends StatefulWidget {
   @override
@@ -6,7 +7,8 @@ class AddAnswer extends StatefulWidget {
 }
 
 class _AddAnswerState extends State<AddAnswer> {
-  int count = -1;
+  //int count = -1;
+  int count = 11;
   TextEditingController totalQuestion = TextEditingController();
 
   @override
@@ -76,10 +78,10 @@ class _AddAnswerState extends State<AddAnswer> {
                 child: Text('${index + 1}'),
               ),
               SizedBox(width: 24.0),
-              option('A'),
-              option('B'),
-              option('C'),
-              option('D'),
+              CircleCheckBox(option: 'A'),
+              CircleCheckBox(option: 'B'),
+              CircleCheckBox(option: 'C'),
+              CircleCheckBox(option: 'D'),
             ],
           ),
         );
@@ -100,10 +102,10 @@ class _AddAnswerState extends State<AddAnswer> {
               child: Text('${i + 1}'),
             ),
             SizedBox(width: 24.0),
-            option('A'),
-            option('B'),
-            option('C'),
-            option('D'),
+            // CircleCheckBox(option: 'A'),
+            // CircleCheckBox(option: 'B'),
+            // CircleCheckBox(option: 'C'),
+            // CircleCheckBox(option: 'D'),
           ],
         ),
       );
@@ -128,24 +130,24 @@ class _AddAnswerState extends State<AddAnswer> {
     return widgetList;
   }
 
-  Widget option(String option) {
-    return Container(
-      width: 40.0,
-      height: 40.0,
-      decoration: BoxDecoration(
-        //color: Colors.blue,
-        borderRadius: BorderRadius.circular(50.0),
-        border: Border.all(
-          color: Colors.blue,
-          width: 2.0,
-        ),
-      ),
-      margin: EdgeInsets.all(8.0),
-      child: Center(
-        child: Text(option),
-      ),
-    );
-  }
+  // Widget option(String option) {
+  //   return Container(
+  //     width: 40.0,
+  //     height: 40.0,
+  //     decoration: BoxDecoration(
+  //       //color: Colors.blue,
+  //       borderRadius: BorderRadius.circular(50.0),
+  //       border: Border.all(
+  //         color: Colors.blue,
+  //         width: 2.0,
+  //       ),
+  //     ),
+  //     margin: EdgeInsets.all(8.0),
+  //     child: Center(
+  //       child: Text(option),
+  //     ),
+  //   );
+  // }
 
   Widget buttons() {
     return Column(
