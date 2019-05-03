@@ -73,4 +73,20 @@ class ValidationMixin {
       }
     },
   );
+
+  // Validation for total number of question
+  StreamTransformer validateTotalNoOfQuestion =
+      StreamTransformer<String, String>.fromHandlers(
+    handleData: (String noOfQstn, EventSink<String> sink) {
+      if (noOfQstn.length < 0) {
+        sink.addError('Please provide some value.');
+      } else if (int.tryParse(noOfQstn) == null) {
+        sink.addError('Number of questions must me an integer.');
+      } else if (int.parse(noOfQstn) < 1) {
+        sink.addError('Number of questions must greater than 1.');
+      } else {
+        sink.add(noOfQstn);
+      }
+    },
+  );
 }

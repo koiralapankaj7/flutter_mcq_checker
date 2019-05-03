@@ -88,7 +88,7 @@ class AppRoutes {
     return MaterialPageRoute(
       builder: (BuildContext context) {
         // Map<int, String> questionAnswer = settings.arguments;
-        // ModuleBloc bloc = ModuleProvider.of(context);
+        //ModuleBloc bloc = ModuleProvider.of(context);
         return AddAnswer();
       },
     );

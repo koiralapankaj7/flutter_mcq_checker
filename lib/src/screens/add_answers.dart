@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
 import 'package:flutter_mcq_checker/src/widgets/circle_check_box.dart';
 
-class AddAnswer extends StatefulWidget {
-  @override
-  _AddAnswerState createState() => _AddAnswerState();
-}
+// class AddAnswer extends StatefulWidget {
+//   // final ModuleBloc bloc;
+//   // AddAnswer({this.bloc});
 
-class _AddAnswerState extends State<AddAnswer> {
-  //int count = -1;
-  int count = 11;
-  TextEditingController totalQuestion = TextEditingController();
+//   @override
+//   _AddAnswerState createState() => _AddAnswerState();
+// }
+
+class AddAnswer extends StatelessWidget {
   ModuleBloc bloc;
 
   @override
@@ -22,7 +22,15 @@ class _AddAnswerState extends State<AddAnswer> {
       appBar: AppBar(
         title: Text('Add answers'),
       ),
-      body: count < 0 ? askForTotalQuestion() : setAnswers(),
+      body: StreamBuilder(
+        stream: bloc.totalQuestions,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (!snapshot.hasData) {
+            return askForTotalQuestion();
+          }
+          return setAnswers(snapshot.data);
+        },
+      ),
     );
   }
 
@@ -30,50 +38,58 @@ class _AddAnswerState extends State<AddAnswer> {
     return Center(
       child: Container(
         margin: EdgeInsets.all(24.0),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  controller: totalQuestion,
-                  decoration: InputDecoration(
-                    hintText: '10',
-                    labelText: 'Number of questions',
+        child: StreamBuilder(
+          stream: bloc.totalNoOfQuestions,
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            return Row(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: TextField(
+                      onChanged: bloc.changeTotalNoOfQuestion,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: '10',
+                        labelText: 'Number of questions',
+                        errorText: snapshot.error,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            ),
-            CircleAvatar(
-              child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    count = int.parse(totalQuestion.text) + 1;
-                    totalQuestion.text = '';
-                  });
-                },
-                icon: Icon(Icons.add),
-              ),
-            ),
-          ],
+                CircleAvatar(
+                  child: IconButton(
+                    onPressed: !snapshot.hasData
+                        ? null
+                        : () {
+                            bloc.changeTotalQuestion(snapshot.data);
+                          },
+                    icon: Icon(Icons.add),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget setAnswers() {
+  Widget setAnswers(String totalQuestions) {
+    final int count = int.parse(totalQuestions);
+
     return ListView.builder(
       padding: EdgeInsets.all(16.0),
-      itemCount: count,
+      itemCount: count + 1,
       itemBuilder: (BuildContext context, int index) {
         final int questionNo = index + 1;
 
         // Button
-        if (index == count - 1) {
-          return buttons();
+        if (index == count) {
+          return buttons(count);
         }
+
         return Container(
           margin: EdgeInsets.only(bottom: 2.0),
           color: Colors.white70,
@@ -95,32 +111,39 @@ class _AddAnswerState extends State<AddAnswer> {
     );
   }
 
-  Widget buttons() {
+  Widget buttons(int count) {
     return Column(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 24.0),
-          child: MaterialButton(
-            onPressed: () {
-              bloc.answers.listen((map) {
-                print(map.length);
-              });
+          child: StreamBuilder(
+            stream: bloc.answers,
+            builder: (BuildContext context,
+                AsyncSnapshot<Map<int, String>> snapshot) {
+              return MaterialButton(
+                onPressed: () {
+                  // if (!snapshot.hasData || snapshot.data.length < count) {
+                  //   return null;
+                  // }
+                  // print('${snapshot.data.toString()}');
+                },
+                color: Colors.lightBlue,
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Text('Add answers'.toUpperCase()),
+              );
             },
-            color: Colors.lightBlue,
-            textColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-            ),
-            child: Text('Add answers'.toUpperCase()),
           ),
         ),
         Container(
           margin: EdgeInsets.only(top: 8.0),
           child: MaterialButton(
             onPressed: () {
-              setState(() {
-                count = -1;
-              });
+              // setState(() {
+              //   count = -1;
+              // });
             },
             color: Colors.lightBlue,
             textColor: Colors.white,
