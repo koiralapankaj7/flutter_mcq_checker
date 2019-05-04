@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
+import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/widgets/circle_check_box.dart';
 
-// class AddAnswer extends StatefulWidget {
-//   // final ModuleBloc bloc;
-//   // AddAnswer({this.bloc});
-
-//   @override
-//   _AddAnswerState createState() => _AddAnswerState();
-// }
-
 class AddAnswer extends StatelessWidget {
-  ModuleBloc bloc;
+  final Module module;
+  final ModuleBloc bloc;
+  // final GlobalKey _scaffold = GlobalKey();
+
+  AddAnswer({this.module, this.bloc});
 
   @override
   Widget build(BuildContext context) {
-    bloc = ModuleProvider.of(context);
-
     return Scaffold(
+      // key: _scaffold,
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Add answers'),
+        title: Text('Answers for ${module.module}'),
       ),
       body: StreamBuilder(
         stream: bloc.totalQuestions,
@@ -112,20 +108,38 @@ class AddAnswer extends StatelessWidget {
   }
 
   Widget buttons(int count) {
-    return Column(
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(top: 24.0),
-          child: StreamBuilder(
-            stream: bloc.answers,
-            builder: (BuildContext context,
-                AsyncSnapshot<Map<int, String>> snapshot) {
-              return MaterialButton(
-                onPressed: () {
-                  // if (!snapshot.hasData || snapshot.data.length < count) {
-                  //   return null;
-                  // }
-                  // print('${snapshot.data.toString()}');
+    return Builder(
+      builder: (BuildContext context) {
+        return Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: 24.0),
+              child: MaterialButton(
+                onPressed: () async {
+                  Map<int, String> answerMap;
+                  bloc.answers.listen((map) {
+                    answerMap = map;
+                  });
+
+                  if (answerMap != null && answerMap.length == count) {
+                    print(answerMap.toString());
+                    module.setAnswers(answerMap);
+                    int result = await bloc.addAnswers(module);
+                    if (result == module.id) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Successfully added to database..'),
+                      ));
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Something went wrong..'),
+                      ));
+                    }
+                  } else {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content:
+                          Text('Please provide answers for all questions..'),
+                    ));
+                  }
                 },
                 color: Colors.lightBlue,
                 textColor: Colors.white,
@@ -133,27 +147,27 @@ class AddAnswer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: Text('Add answers'.toUpperCase()),
-              );
-            },
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 8.0),
-          child: MaterialButton(
-            onPressed: () {
-              // setState(() {
-              //   count = -1;
-              // });
-            },
-            color: Colors.lightBlue,
-            textColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
+              ),
             ),
-            child: Text('Reset'.toUpperCase()),
-          ),
-        ),
-      ],
+            Container(
+              margin: EdgeInsets.only(top: 8.0),
+              child: MaterialButton(
+                onPressed: () {
+                  // setState(() {
+                  //   count = -1;
+                  // });
+                },
+                color: Colors.lightBlue,
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Text('Reset'.toUpperCase()),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

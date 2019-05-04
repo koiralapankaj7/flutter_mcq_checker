@@ -129,6 +129,11 @@ class ModuleBloc with ValidationMixin {
     await addModule(module);
   }
 
+  Future<int> addAnswers(Module module) async {
+    return _dbProvider.updateModule(module);
+    // print('Answer added successfully');
+  }
+
   // Clear db
   clearModule() {
     return _dbProvider.clearModule();

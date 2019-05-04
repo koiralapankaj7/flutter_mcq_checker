@@ -146,7 +146,8 @@ class ResultScreen extends StatelessWidget {
         );
         break;
       case 'add':
-        Navigator.pushNamed(_scaffoldKey.currentContext, 'addAnswers');
+        Navigator.pushNamed(_scaffoldKey.currentContext, 'addAnswers',
+            arguments: module);
         break;
       case 'edit':
         Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');

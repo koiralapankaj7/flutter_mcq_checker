@@ -28,15 +28,10 @@ class Module {
   static final String _columnKids = 'kids';
   static final String _columnAnswer = 'answer';
 
-  // Module(String module, int year, int sem, String group, String marker,
-  //     List<int> kids, List<Map<int, String>> answers)
-  //     : this.module = module,
-  //       this.year = year,
-  //       this.sem = sem,
-  //       this.group = group,
-  //       this.marker = marker,
-  //       this.kids = kids,
-  //       this.answer = answers;
+  // Set answers
+  void setAnswers(Map<int, String> answers) {
+    this.answers.add(answers);
+  }
 
   Module(this.module, this.year, this.sem, this.group, this.marker, this.kids,
       this.answers);

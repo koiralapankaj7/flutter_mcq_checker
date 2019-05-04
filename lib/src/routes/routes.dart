@@ -87,9 +87,9 @@ class AppRoutes {
   MaterialPageRoute openAddAnswerScreen(RouteSettings settings) {
     return MaterialPageRoute(
       builder: (BuildContext context) {
-        // Map<int, String> questionAnswer = settings.arguments;
-        //ModuleBloc bloc = ModuleProvider.of(context);
-        return AddAnswer();
+        Module module = settings.arguments;
+        ModuleBloc bloc = ModuleProvider.of(context);
+        return AddAnswer(module: module, bloc: bloc);
       },
     );
   }
