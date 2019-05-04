@@ -118,6 +118,18 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
           : answers[widget.questionNo] + widget.answer;
 
       bloc.changeAnswer(answers);
+    } else {
+      // If selected option is not null and greater than 1. Greater than one means
+      // User has selected multiple answer. If user unselect selected answer then remove that
+      // unselected option from the answer. If there is only one selected answer and user
+      // unselect later then remove that question from the map.
+      if (answers[widget.questionNo] != null &&
+          answers[widget.questionNo].length > 1) {
+        answers[widget.questionNo] =
+            answers[widget.questionNo].replaceFirst(RegExp(widget.answer), '');
+      } else {
+        answers.remove(widget.questionNo);
+      }
     }
 
     print('${answers.toString()}');

@@ -14,9 +14,9 @@ class Module {
   // Marker name
   final String marker;
   // List of students id
-  final List<dynamic> kids;
+  List<dynamic> kids;
   // Map of correct answers. <questionNo, Answer>
-  final List<dynamic> answers;
+  List<dynamic> answers;
 
   // Columns in database
   static final String _columnId = 'id';
@@ -29,8 +29,15 @@ class Module {
   static final String _columnAnswer = 'answer';
 
   // Set answers
-  void setAnswers(Map<int, String> answers) {
-    this.answers.add(answers);
+  void setAnswers(Map<int, String> map) {
+    this.answers = [map];
+  }
+
+  List<dynamic> get getAnswers => answers;
+
+  // Set answers
+  void setKids(List list) {
+    this.kids = list;
   }
 
   Module(this.module, this.year, this.sem, this.group, this.marker, this.kids,

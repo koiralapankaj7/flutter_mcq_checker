@@ -122,6 +122,7 @@ class ModuleBloc with ValidationMixin {
     final String group = _group.value;
     final String marker = _marker.value;
     final List<int> kids = [];
+    // If answers stream is null then add empty map.
     final List<Map<int, String>> answers = [_answers.value];
 
     Module module = Module(moduleName, year, sem, group, marker, kids, answers);
@@ -129,8 +130,9 @@ class ModuleBloc with ValidationMixin {
     await addModule(module);
   }
 
-  Future<int> addAnswers(Module module) async {
-    return _dbProvider.updateModule(module);
+  Future<int> updateModule(Module module) async {
+    // module.setAnswers(_answers.value);
+    return await _dbProvider.updateModule(module);
     // print('Answer added successfully');
   }
 
