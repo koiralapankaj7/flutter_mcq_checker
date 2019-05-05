@@ -1,20 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/widgets/circle_check_box.dart';
 
 class AddAnswer extends StatelessWidget {
+  //
+  //
   final Module module;
   final ModuleBloc bloc;
+  // This list is used just for setting size of the list as per number of question
+  // This list is accessed by circle check box to initialize list with fixed size
+  static List<String> answersList;
 
   AddAnswer({this.module, this.bloc});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // key: _scaffold,
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: Text('Answers for ${module.module}'),
@@ -22,7 +24,7 @@ class AddAnswer extends StatelessWidget {
       body: StreamBuilder(
         stream: bloc.totalQuestions,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.data == null) {
             return askForTotalQuestionWidget();
           }
           return selectAnswersWidget(snapshot.data);
@@ -57,7 +59,7 @@ class AddAnswer extends StatelessWidget {
                 ),
                 CircleAvatar(
                   child: IconButton(
-                    onPressed: !snapshot.hasData
+                    onPressed: snapshot.data == null
                         ? null
                         : () {
                             bloc.changeTotalQuestion(snapshot.data);
@@ -74,22 +76,16 @@ class AddAnswer extends StatelessWidget {
   }
 
   Widget selectAnswersWidget(String totalQuestions) {
-    final int count = int.parse(totalQuestions);
-    Map<int, String> answerMap = {};
-    bloc.answers.listen((map) async {
-      answerMap = map;
-      return answerMap;
-    });
+    final int totalNoOfQuestion = int.parse(totalQuestions);
+    answersList = List(totalNoOfQuestion);
 
     return ListView.builder(
       padding: EdgeInsets.all(16.0),
-      itemCount: count + 1,
+      itemCount: totalNoOfQuestion + 1,
       itemBuilder: (BuildContext context, int index) {
-        final int questionNo = index + 1;
-
         // Button
-        if (index == count) {
-          return buttons(count, answerMap);
+        if (index == totalNoOfQuestion) {
+          return buttons();
         }
 
         return Container(
@@ -99,13 +95,13 @@ class AddAnswer extends StatelessWidget {
             children: <Widget>[
               SizedBox(width: 16.0),
               CircleAvatar(
-                child: Text(questionNo.toString()),
+                child: Text('${index + 1}'),
               ),
               SizedBox(width: 24.0),
-              CircleCheckBox(questionNo: questionNo, answer: 'A'),
-              CircleCheckBox(questionNo: questionNo, answer: 'B'),
-              CircleCheckBox(questionNo: questionNo, answer: 'C'),
-              CircleCheckBox(questionNo: questionNo, answer: 'D'),
+              CircleCheckBox(index: index, answer: 'A'),
+              CircleCheckBox(index: index, answer: 'B'),
+              CircleCheckBox(index: index, answer: 'C'),
+              CircleCheckBox(index: index, answer: 'D'),
             ],
           ),
         );
@@ -113,69 +109,30 @@ class AddAnswer extends StatelessWidget {
     );
   }
 
-  BuildContext context;
-  Map<int, String> answersMap;
-
-  addAnswer() async {
-    print('Answers list : ${module.answers.toString()}');
-
-    module.setAnswers(answersMap);
-    // module.setKids(module.kids);
-
-    print('Answers list : ${module.answers.toString()}');
-
-    try {
-      Module moduleTest = Module(module.module, module.year, module.sem,
-          module.group, module.marker, module.kids, [
-        {1, 'A'}
-      ]);
-      print(moduleTest.toMap().toString());
-    } catch (e) {
-      print(e);
-    }
-
-    // int result = await bloc.updateModule(module);
-    // print(result);
-    // bloc.answers.forEach((Map<int, String> map) async {
-    //   // module.setAnswers(map);
-    //   // module.setKids(module.kids);
-
-    //   // print(module.answers.toString());
-    //   // print(module.kids.toString());
-    //   // int result = await bloc.updateModule(module);
-    //   // print(result);
-    //   // if (result == module.id) {
-    //   //   Scaffold.of(context).showSnackBar(SnackBar(
-    //   //     content: Text('Successfully added to database..'),
-    //   //   ));
-    //   // } else {
-    //   //   Scaffold.of(context).showSnackBar(SnackBar(
-    //   //     content: Text('Something went wrong..'),
-    //   //   ));
-    //   // }
-    // });
-
-    // module.setAnswers(answersMap);
-    // print(module.answers.toString());
-    //print(answersMap.toString());
-  }
-
-  Widget buttons(int count, Map<int, String> answerMap) {
+  Widget buttons() {
     return Column(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 24.0),
           child: StreamBuilder(
               stream: bloc.answers,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
                 this.context = context;
-                this.answersMap = snapshot.data;
+
+                bool activateBUtton = false;
+                if (snapshot.hasData) {
+                  snapshot.data.forEach((String answer) {
+                    if (answer == null) {
+                      activateBUtton = false;
+                    } else {
+                      activateBUtton = true;
+                    }
+                  });
+                }
 
                 return MaterialButton(
-                  onPressed:
-                      (snapshot.data == null) || (snapshot.data.length != count)
-                          ? null
-                          : addAnswer,
+                  onPressed: activateBUtton ? addAnswer : null,
                   color: Colors.lightBlue,
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -189,9 +146,8 @@ class AddAnswer extends StatelessWidget {
           margin: EdgeInsets.only(top: 8.0),
           child: MaterialButton(
             onPressed: () {
-              // setState(() {
-              //   count = -1;
-              // });
+              bloc.changeTotalQuestion(null);
+              bloc.changeTotalNoOfQuestion('');
             },
             color: Colors.lightBlue,
             textColor: Colors.white,
@@ -205,65 +161,32 @@ class AddAnswer extends StatelessWidget {
     );
   }
 
-  // Widget buttons(int count, Map<int, String> answerMap) {
-  //   return Builder(
-  //     builder: (BuildContext context) {
-  //       return Column(
-  //         children: <Widget>[
-  //           Container(
-  //             margin: EdgeInsets.only(top: 24.0),
-  //             child: MaterialButton(
-  //               onPressed: () async {
-  //                 print(answerMap.length);
+  BuildContext context;
 
-  //                 if (answerMap != null && answerMap.length == count) {
-  //                   print(answerMap.toString());
-  //                   // module.setAnswers(answerMap);
-  //                   // int result = await bloc.addAnswers(module);
-  //                   // if (result == module.id) {
-  //                   //   Scaffold.of(context).showSnackBar(SnackBar(
-  //                   //     content: Text('Successfully added to database..'),
-  //                   //   ));
-  //                   // } else {
-  //                   //   Scaffold.of(context).showSnackBar(SnackBar(
-  //                   //     content: Text('Something went wrong..'),
-  //                   //   ));
-  //                   // }
-  //                 } else {
-  //                   Scaffold.of(context).showSnackBar(SnackBar(
-  //                     content:
-  //                         Text('Please provide answers for all questions..'),
-  //                   ));
-  //                 }
-  //               },
-  //               color: Colors.lightBlue,
-  //               textColor: Colors.white,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(50.0),
-  //               ),
-  //               child: Text('Add answers'.toUpperCase()),
-  //             ),
-  //           ),
-  //           Container(
-  //             margin: EdgeInsets.only(top: 8.0),
-  //             child: MaterialButton(
-  //               onPressed: () {
-  //                 // setState(() {
-  //                 //   count = -1;
-  //                 // });
-  //               },
-  //               color: Colors.lightBlue,
-  //               textColor: Colors.white,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(50.0),
-  //               ),
-  //               child: Text('Reset'.toUpperCase()),
-  //             ),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  addAnswer() async {
+    // print('Answers list : ${module.answers.toString()}');
 
+    // print('Answers list : ${module.answers.toString()}');
+    //print(module.toMap().toString());
+
+    try {
+      //module.setAnswers(answersList);
+      int result = await bloc.updateModule(module);
+      print('Result is $result');
+      print('Module id is ${module.id}');
+      if (result == module.id) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Successfully added to database..'),
+        ));
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Something went wrong..'),
+        ));
+      }
+    } catch (e) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(e),
+      ));
+    }
+  }
 }

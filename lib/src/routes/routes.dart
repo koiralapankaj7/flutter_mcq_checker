@@ -76,9 +76,23 @@ class AppRoutes {
   MaterialPageRoute openEditAnswerScreen(RouteSettings settings) {
     return MaterialPageRoute(
       builder: (BuildContext context) {
-        Map<int, String> questionAnswer = settings.arguments;
+        Module module = settings.arguments;
         ModuleBloc bloc = ModuleProvider.of(context);
-        return EditAnswerScreen(bloc: bloc, answers: questionAnswer);
+
+        if (module.answers.length > 0) {
+          // We stored list as dynamic in database  as List<dynamic>
+          // In stream we declared list as List<String>
+          // If we pass answers fetched from db directly to stream we will get an exception
+          // dart type 'list dynamic ' is not a subtype of type 'list string '
+          // So we are creating new list of type string
+          List<String> list = List();
+          module.answers.forEach((answer) {
+            list.add(answer);
+          });
+          bloc.changeAnswer(list);
+        }
+
+        return EditAnswerScreen(bloc: bloc, module: module);
       },
     );
   }

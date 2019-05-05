@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
+import 'package:flutter_mcq_checker/src/screens/add_answers.dart';
 
 class CircleCheckBox extends StatefulWidget {
-  final int questionNo;
+  final int index;
   final String answer;
-  CircleCheckBox({this.questionNo, this.answer});
+
+  CircleCheckBox({this.index, this.answer});
 
   @override
   _CircleCheckBoxState createState() => _CircleCheckBoxState();
@@ -19,7 +21,7 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
   bool isSelected = false;
   AnimationController controller;
   Animation flipAnimation;
-  Map<int, String> answers = {};
+  List<String> answers = AddAnswer.answersList;
 
   initAnimation() {
     controller = AnimationController(
@@ -45,13 +47,6 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
   Widget build(BuildContext context) {
     //
     bloc = ModuleProvider.of(context);
-
-    bloc.answers.listen(
-      (Map<int, String> map) {
-        answers = map;
-        return answers;
-      },
-    );
 
     return AnimatedBuilder(
       animation: controller,
@@ -111,25 +106,27 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
       isSelected = true;
       controller.forward();
     }
+    print(answers.length);
 
     if (isSelected) {
-      answers[widget.questionNo] = answers[widget.questionNo] == null
+      answers[widget.index] = answers[widget.index] == null
           ? widget.answer
-          : answers[widget.questionNo] + widget.answer;
-
+          : answers[widget.index] + widget.answer;
       bloc.changeAnswer(answers);
+      AddAnswer.answersList = answers;
     } else {
       // If selected option is not null and greater than 1. Greater than one means
       // User has selected multiple answer. If user unselect selected answer then remove that
       // unselected option from the answer. If there is only one selected answer and user
       // unselect later then remove that question from the map.
-      if (answers[widget.questionNo] != null &&
-          answers[widget.questionNo].length > 1) {
-        answers[widget.questionNo] =
-            answers[widget.questionNo].replaceFirst(RegExp(widget.answer), '');
+      if (answers[widget.index] != null && answers[widget.index].length > 1) {
+        answers[widget.index] =
+            answers[widget.index].replaceFirst(RegExp(widget.answer), '');
       } else {
-        answers.remove(widget.questionNo);
+        answers[widget.index] = null;
       }
+      bloc.changeAnswer(answers);
+      AddAnswer.answersList = answers;
     }
 
     print('${answers.toString()}');

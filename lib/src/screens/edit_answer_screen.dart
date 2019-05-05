@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_bloc.dart';
+import 'package:flutter_mcq_checker/src/models/module.dart';
 
 class EditAnswerScreen extends StatefulWidget {
   final ModuleBloc bloc;
-  final Map<int, String> answers;
-  EditAnswerScreen({this.bloc, this.answers});
+  final Module module;
+  EditAnswerScreen({this.bloc, this.module});
 
   @override
   _EditAnswerScreenState createState() => _EditAnswerScreenState();
@@ -48,8 +49,7 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
       ),
       body: StreamBuilder(
         stream: widget.bloc.answers,
-        builder:
-            (BuildContext context, AsyncSnapshot<Map<int, String>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: Text('You did not add answers for this module'),
@@ -61,7 +61,7 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
     );
   }
 
-  Widget buildBody(Map<int, String> questionAnswers) {
+  Widget buildBody(List<String> questionAnswers) {
     initAnimation(questionAnswers.length);
 
     return ListView.builder(
@@ -73,10 +73,10 @@ class _EditAnswerScreenState extends State<EditAnswerScreen>
           margin: EdgeInsets.only(bottom: 2.0),
           child: ListTile(
             leading: CircleAvatar(
-              child: Text('${questionAnswers.keys.toList()[index]}'),
+              child: Text('${index + 1}'),
             ),
             title: Text(
-              '${questionAnswers.values.toList()[index]}',
+              '${questionAnswers[index]}',
               style: TextStyle(color: Colors.white),
             ),
             trailing: revealTextEditor(index),

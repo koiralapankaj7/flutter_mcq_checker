@@ -63,8 +63,8 @@ class ValidationMixin {
 
   // Validation for answer
   StreamTransformer validateAnswer =
-      StreamTransformer<Map<int, String>, Map<int, String>>.fromHandlers(
-    handleData: (Map<int, String> answer, EventSink<Map<int, String>> sink) {
+      StreamTransformer<List<String>, List<String>>.fromHandlers(
+    handleData: (List<String> answer, EventSink<List<String>> sink) {
       if (answer.isNotEmpty) {
         sink.add(answer);
       } else {
@@ -81,7 +81,7 @@ class ValidationMixin {
       if (noOfQstn.length < 0) {
         sink.addError('Please provide some value.');
       } else if (int.tryParse(noOfQstn) == null) {
-        sink.addError('Number of questions must me an integer.');
+        sink.addError('Number of questions must be an integer.');
       } else if (int.parse(noOfQstn) < 1) {
         sink.addError('Number of questions must greater than 1.');
       } else {

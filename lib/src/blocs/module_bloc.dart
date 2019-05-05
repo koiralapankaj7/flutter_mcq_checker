@@ -23,7 +23,7 @@ class ModuleBloc with ValidationMixin {
   // Stream controller / subject for marker name from text field
   final BehaviorSubject<String> _marker = BehaviorSubject();
   // Stream controller / subject for  scanning correct answers / Button
-  final BehaviorSubject<Map<int, String>> _answers = BehaviorSubject();
+  final BehaviorSubject<List<String>> _answers = BehaviorSubject();
   // Stream controller / subject for total number of questions user is about to add answers for
   // Used for form validation
   final BehaviorSubject<String> _totalNoOfQuestions =
@@ -46,7 +46,7 @@ class ModuleBloc with ValidationMixin {
   // Get marker name from text field
   Observable<String> get marker => _marker.stream.transform(validateMarker);
   // Scan answer
-  Observable<Map<int, String>> get answers =>
+  Observable<List<String>> get answers =>
       _answers.stream.transform(validateAnswer);
   // Get total number of questions
   Observable<String> get totalNoOfQuestions =>
@@ -77,7 +77,7 @@ class ModuleBloc with ValidationMixin {
   // Add marker name to stream
   Function(String) get changeMarker => _marker.sink.add;
   // Add answer to stream
-  Function(Map<int, String>) get changeAnswer => _answers.sink.add;
+  Function(List<String>) get changeAnswer => _answers.sink.add;
   // Add total number of question to stream
   Function(String) get changeTotalNoOfQuestion => _totalNoOfQuestions.sink.add;
   Function(String) get changeTotalQuestion => _totalQuestion.sink.add;
@@ -122,8 +122,8 @@ class ModuleBloc with ValidationMixin {
     final String group = _group.value;
     final String marker = _marker.value;
     final List<int> kids = [];
-    // If answers stream is null then add empty map.
-    final List<Map<int, String>> answers = [_answers.value];
+
+    final List<String> answers = _answers.value;
 
     Module module = Module(moduleName, year, sem, group, marker, kids, answers);
 
@@ -131,7 +131,7 @@ class ModuleBloc with ValidationMixin {
   }
 
   Future<int> updateModule(Module module) async {
-    // module.setAnswers(_answers.value);
+    module.setAnswers(_answers.value);
     return await _dbProvider.updateModule(module);
     // print('Answer added successfully');
   }

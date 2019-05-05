@@ -150,7 +150,8 @@ class ResultScreen extends StatelessWidget {
             arguments: module);
         break;
       case 'edit':
-        Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers');
+        Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers',
+            arguments: module);
         break;
       default:
         break;

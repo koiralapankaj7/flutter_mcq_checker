@@ -150,7 +150,7 @@ class ScanAnswers extends StatelessWidget {
     TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
     VisionText text = await textRecognizer.processImage(image);
 
-    Map<int, String> questionAnswer = Map();
+    List<String> questionAnswer = List();
     int questionNo;
 
     for (TextBlock block in text.blocks) {
