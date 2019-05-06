@@ -21,13 +21,26 @@ class AddAnswer extends StatelessWidget {
       appBar: AppBar(
         title: Text('Answers for ${module.module}'),
       ),
+      // body: StreamBuilder(
+      //   stream: bloc.totalQuestions,
+      //   builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      //     if (snapshot.data == null) {
+      //       return askForTotalQuestionWidget();
+      //     }
+      //     return selectAnswersWidget(snapshot.data);
+      //   },
+      // ),
       body: StreamBuilder(
-        stream: bloc.totalQuestions,
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.data == null) {
+        stream: bloc.answers,
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+          if (!snapshot.hasData) {
             return askForTotalQuestionWidget();
+          } else {
+            return Center(
+              child: Text('Answer has been already added for this module.'),
+            );
           }
-          return selectAnswersWidget(snapshot.data);
+          //return selectAnswersWidget(snapshot.data);
         },
       ),
     );
@@ -40,38 +53,48 @@ class AddAnswer extends StatelessWidget {
         child: StreamBuilder(
           stream: bloc.totalNoOfQuestions,
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            return Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: TextField(
-                      onChanged: bloc.changeTotalNoOfQuestion,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: '10',
-                        labelText: 'Number of questions',
-                        errorText: snapshot.error,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                CircleAvatar(
-                  child: IconButton(
-                    onPressed: snapshot.data == null
-                        ? null
-                        : () {
-                            bloc.changeTotalQuestion(snapshot.data);
-                          },
-                    icon: Icon(Icons.add),
-                  ),
-                ),
-              ],
-            );
+            //
+            //
+            if (!snapshot.hasData) {
+              return totalNoOfQuestionWidget(snapshot);
+            }
+
+            selectAnswersWidget(snapshot.data);
           },
         ),
       ),
+    );
+  }
+
+  Widget totalNoOfQuestionWidget(AsyncSnapshot<String> snapshot) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: TextField(
+              onChanged: bloc.changeTotalNoOfQuestion,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: '10',
+                labelText: 'Number of questions',
+                errorText: snapshot.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        CircleAvatar(
+          child: IconButton(
+            onPressed: !snapshot.hasData
+                ? null
+                : () {
+                    bloc.changeTotalNoOfQuestion(snapshot.data);
+                  },
+            icon: Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 
@@ -164,19 +187,13 @@ class AddAnswer extends StatelessWidget {
   BuildContext context;
 
   addAnswer() async {
-    // print('Answers list : ${module.answers.toString()}');
-
-    // print('Answers list : ${module.answers.toString()}');
-    //print(module.toMap().toString());
-
     try {
-      //module.setAnswers(answersList);
       int result = await bloc.updateModule(module);
       print('Result is $result');
       print('Module id is ${module.id}');
       if (result == module.id) {
         Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text('Successfully added to database..'),
+          content: Text('Answers added successfully ..'),
         ));
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(

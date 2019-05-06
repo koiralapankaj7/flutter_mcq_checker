@@ -122,7 +122,6 @@ class ModuleBloc with ValidationMixin {
     final String group = _group.value;
     final String marker = _marker.value;
     final List<int> kids = [];
-
     final List<String> answers = _answers.value;
 
     Module module = Module(moduleName, year, sem, group, marker, kids, answers);
