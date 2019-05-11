@@ -170,10 +170,8 @@ class AddAnswer extends StatelessWidget {
   addAnswer(BuildContext context) async {
     try {
       int result = await bloc.updateModule(module);
-      print('Result is $result');
-      print('Module id is ${module.id}');
 
-      if (result == module.id) {
+      if (result == 1) {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Answers added successfully ..'),
         ));

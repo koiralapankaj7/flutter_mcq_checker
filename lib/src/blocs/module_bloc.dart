@@ -132,6 +132,7 @@ class ModuleBloc with ValidationMixin {
 
   Future<int> updateModule(Module module) async {
     module.setAnswers(_answers.value);
+    // After updating answer set answers stream empty
     changeAnswer(null);
     return await _dbProvider.updateModule(module);
   }
