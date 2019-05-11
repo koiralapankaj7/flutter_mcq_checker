@@ -26,10 +26,10 @@ class ModuleBloc with ValidationMixin {
   final BehaviorSubject<List<String>> _answers = BehaviorSubject();
   // Stream controller / subject for total number of questions user is about to add answers for
   // Used for form validation
-  final BehaviorSubject<String> _totalNoOfQuestions =
-      BehaviorSubject(); // For validation
   final BehaviorSubject<String> _totalQuestion =
       BehaviorSubject(); // For displaying widget
+  final BehaviorSubject<int> _validateTotalQuestion =
+      BehaviorSubject(); // For validation
 
   // =================STREAM CONTROLLER / SUBJECT END=============
 
@@ -49,9 +49,9 @@ class ModuleBloc with ValidationMixin {
   Observable<List<String>> get answers =>
       _answers.stream.transform(validateAnswer);
   // Get total number of questions
-  Observable<String> get totalNoOfQuestions =>
-      _totalNoOfQuestions.stream.transform(validateTotalNoOfQuestion);
-  Observable<String> get totalQuestions => _totalQuestion.stream;
+  Observable<String> get totalQuestions =>
+      _totalQuestion.stream.transform(validateTotalNoOfQuestion);
+  Observable<int> get validTotalQuestion => _validateTotalQuestion.stream;
 
   // Validation for add module button
   Observable<bool> get addModuleValidation => Observable.combineLatest5(
@@ -79,8 +79,9 @@ class ModuleBloc with ValidationMixin {
   // Add answer to stream
   Function(List<String>) get changeAnswer => _answers.sink.add;
   // Add total number of question to stream
-  Function(String) get changeTotalNoOfQuestion => _totalNoOfQuestions.sink.add;
+  // Function(String) get changeTotalNoOfQuestion => _totalNoOfQuestions.sink.add;
   Function(String) get changeTotalQuestion => _totalQuestion.sink.add;
+  Function(int) get changeValidTotalQuestion => _validateTotalQuestion.sink.add;
 
   // =================ADD TO SINK END=============
 
@@ -131,8 +132,8 @@ class ModuleBloc with ValidationMixin {
 
   Future<int> updateModule(Module module) async {
     module.setAnswers(_answers.value);
+    changeAnswer(null);
     return await _dbProvider.updateModule(module);
-    // print('Answer added successfully');
   }
 
   // Clear db
@@ -149,7 +150,7 @@ class ModuleBloc with ValidationMixin {
     _group.close();
     _marker.close();
     _answers.close();
-    _totalNoOfQuestions.close();
+    _validateTotalQuestion.close();
     _totalQuestion.close();
     //_module.close();
   }

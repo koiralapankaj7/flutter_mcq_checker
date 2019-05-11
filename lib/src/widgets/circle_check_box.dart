@@ -106,7 +106,6 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
       isSelected = true;
       controller.forward();
     }
-    print(answers.length);
 
     if (isSelected) {
       answers[widget.index] = answers[widget.index] == null

@@ -81,7 +81,7 @@ class ValidationMixin {
       if (noOfQstn.length < 0) {
         sink.addError('Please provide some value.');
       } else if (int.tryParse(noOfQstn) == null) {
-        sink.addError('Number of questions must be an integer.');
+        sink.addError('Number of questions must be number.');
       } else if (int.parse(noOfQstn) < 1) {
         sink.addError('Number of questions must greater than 1.');
       } else {

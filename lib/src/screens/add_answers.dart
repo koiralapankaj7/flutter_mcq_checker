@@ -21,93 +21,73 @@ class AddAnswer extends StatelessWidget {
       appBar: AppBar(
         title: Text('Answers for ${module.module}'),
       ),
-      // body: StreamBuilder(
-      //   stream: bloc.totalQuestions,
-      //   builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-      //     if (snapshot.data == null) {
-      //       return askForTotalQuestionWidget();
-      //     }
-      //     return selectAnswersWidget(snapshot.data);
-      //   },
-      // ),
-      body: StreamBuilder(
-        stream: bloc.answers,
-        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-          if (!snapshot.hasData) {
-            return askForTotalQuestionWidget();
-          } else {
-            return Center(
-              child: Text('Answer has been already added for this module.'),
-            );
-          }
-          //return selectAnswersWidget(snapshot.data);
-        },
-      ),
+      body: buildBody(),
     );
   }
 
-  Widget askForTotalQuestionWidget() {
+  Widget buildBody() {
     return Center(
       child: Container(
         margin: EdgeInsets.all(24.0),
         child: StreamBuilder(
-          stream: bloc.totalNoOfQuestions,
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            //
-            //
-            if (!snapshot.hasData) {
-              return totalNoOfQuestionWidget(snapshot);
+          stream: bloc.validTotalQuestion,
+          builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+            if (snapshot.hasData) {
+              return selectAnswersWidget(snapshot.data);
             }
-
-            selectAnswersWidget(snapshot.data);
+            return totalNoOfQuestionWidget();
           },
         ),
       ),
     );
   }
 
-  Widget totalNoOfQuestionWidget(AsyncSnapshot<String> snapshot) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: TextField(
-              onChanged: bloc.changeTotalNoOfQuestion,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: '10',
-                labelText: 'Number of questions',
-                errorText: snapshot.error,
+  Widget totalNoOfQuestionWidget() {
+    return StreamBuilder(
+      stream: bloc.totalQuestions,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        return Row(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: TextField(
+                  onChanged: bloc.changeTotalQuestion,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: '10',
+                    labelText: 'Number of questions',
+                    errorText: snapshot.error,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-        ),
-        CircleAvatar(
-          child: IconButton(
-            onPressed: !snapshot.hasData
-                ? null
-                : () {
-                    bloc.changeTotalNoOfQuestion(snapshot.data);
-                  },
-            icon: Icon(Icons.add),
-          ),
-        ),
-      ],
+            CircleAvatar(
+              child: IconButton(
+                onPressed: snapshot.data == null
+                    ? null
+                    : () {
+                        bloc.changeValidTotalQuestion(int.parse(snapshot.data));
+                      },
+                icon: Icon(Icons.add),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget selectAnswersWidget(String totalQuestions) {
-    final int totalNoOfQuestion = int.parse(totalQuestions);
-    answersList = List(totalNoOfQuestion);
+  Widget selectAnswersWidget(int totalQuestions) {
+    answersList = List(totalQuestions);
 
     return ListView.builder(
       padding: EdgeInsets.all(16.0),
-      itemCount: totalNoOfQuestion + 1,
+      itemCount: totalQuestions + 1,
       itemBuilder: (BuildContext context, int index) {
         // Button
-        if (index == totalNoOfQuestion) {
+        if (index == totalQuestions) {
           return buttons();
         }
 
@@ -133,6 +113,7 @@ class AddAnswer extends StatelessWidget {
   }
 
   Widget buttons() {
+    bool activateBUtton = false;
     return Column(
       children: <Widget>[
         Container(
@@ -141,13 +122,11 @@ class AddAnswer extends StatelessWidget {
               stream: bloc.answers,
               builder:
                   (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                this.context = context;
-
-                bool activateBUtton = false;
                 if (snapshot.hasData) {
                   snapshot.data.forEach((String answer) {
                     if (answer == null) {
                       activateBUtton = false;
+                      return;
                     } else {
                       activateBUtton = true;
                     }
@@ -155,7 +134,11 @@ class AddAnswer extends StatelessWidget {
                 }
 
                 return MaterialButton(
-                  onPressed: activateBUtton ? addAnswer : null,
+                  onPressed: activateBUtton
+                      ? () {
+                          addAnswer(context);
+                        }
+                      : null,
                   color: Colors.lightBlue,
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -169,32 +152,33 @@ class AddAnswer extends StatelessWidget {
           margin: EdgeInsets.only(top: 8.0),
           child: MaterialButton(
             onPressed: () {
-              bloc.changeTotalQuestion(null);
-              bloc.changeTotalNoOfQuestion('');
+              bloc.changeValidTotalQuestion(null);
+              bloc.changeTotalQuestion('');
             },
             color: Colors.lightBlue,
             textColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50.0),
             ),
-            child: Text('Reset'.toUpperCase()),
+            child: Text('Cancle'.toUpperCase()),
           ),
         ),
       ],
     );
   }
 
-  BuildContext context;
-
-  addAnswer() async {
+  addAnswer(BuildContext context) async {
     try {
       int result = await bloc.updateModule(module);
       print('Result is $result');
       print('Module id is ${module.id}');
+
       if (result == module.id) {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Answers added successfully ..'),
         ));
+        bloc.changeValidTotalQuestion(null);
+        bloc.changeTotalQuestion('');
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Something went wrong..'),
