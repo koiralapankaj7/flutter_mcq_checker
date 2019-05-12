@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
+import 'package:flutter_mcq_checker/src/screens/edit_answer_screen.dart';
 
 class RevealTextField extends StatefulWidget {
+  final int index;
+  RevealTextField({this.index});
+
   @override
   _RevealTextFieldState createState() => _RevealTextFieldState();
 }
@@ -9,6 +14,9 @@ class _RevealTextFieldState extends State<RevealTextField>
     with TickerProviderStateMixin {
   AnimationController controller;
   Animation animation;
+  TextEditingController textController = TextEditingController();
+  ModuleBloc bloc;
+  List<String> answers = EditAnswerScreen.questionAnswers;
 
   @override
   void initState() {
@@ -28,6 +36,8 @@ class _RevealTextFieldState extends State<RevealTextField>
 
   @override
   Widget build(BuildContext context) {
+    bloc = ModuleProvider.of(context);
+
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget child) {
@@ -43,9 +53,11 @@ class _RevealTextFieldState extends State<RevealTextField>
             children: <Widget>[
               Expanded(
                 child: TextField(
+                  controller: textController,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
+                  autofocus: false,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -57,9 +69,7 @@ class _RevealTextFieldState extends State<RevealTextField>
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: IconButton(
-                  onPressed: () {
-                    editIconPressed();
-                  },
+                  onPressed: editIconPressed,
                   icon: Icon(
                     animation.value > 50.0 ? Icons.done : Icons.edit,
                     size: 18.0,
@@ -77,6 +87,13 @@ class _RevealTextFieldState extends State<RevealTextField>
   editIconPressed() {
     if (controller.status == AnimationStatus.completed) {
       controller.reverse();
+
+      if (textController.text.trim() != '') {
+        answers[widget.index] = textController.text.toUpperCase();
+        bloc.changeAnswer(answers);
+      }
+      print(answers.toList());
+      textController.clear();
     } else {
       controller.forward();
     }
