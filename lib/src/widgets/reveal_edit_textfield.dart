@@ -16,7 +16,7 @@ class _RevealTextFieldState extends State<RevealTextField>
   Animation animation;
   TextEditingController textController = TextEditingController();
   ModuleBloc bloc;
-  List<String> answers = EditAnswerScreen.questionAnswers;
+  List<String> answers = EditAnswerScreen.answersList;
 
   @override
   void initState() {
