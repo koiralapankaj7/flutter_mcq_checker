@@ -1,13 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/module_provider.dart';
-import 'package:flutter_mcq_checker/src/screens/add_answers.dart';
 
 class CircleCheckBox extends StatefulWidget {
   final int index;
   final String answer;
-
-  CircleCheckBox({this.index, this.answer});
+  final List<String> answers;
+  CircleCheckBox({this.index, this.answer, this.answers});
 
   @override
   _CircleCheckBoxState createState() => _CircleCheckBoxState();
@@ -21,9 +20,11 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
   bool isSelected = false;
   AnimationController controller;
   Animation flipAnimation;
-  List<String> answers = AddAnswer.answersList;
+  //List<String> answers = AddAnswer.answersList;
 
-  initAnimation() {
+  @override
+  void initState() {
+    super.initState();
     controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 500),
@@ -35,12 +36,12 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
         curve: Interval(0.0, 0.5, curve: Curves.linear),
       ),
     );
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    initAnimation();
+    if (widget.answers[widget.index] != null &&
+        widget.answers[widget.index].contains(widget.answer)) {
+      isSelected = true;
+      controller.forward();
+    }
   }
 
   @override
@@ -108,26 +109,27 @@ class _CircleCheckBoxState extends State<CircleCheckBox>
     }
 
     if (isSelected) {
-      answers[widget.index] = answers[widget.index] == null
+      widget.answers[widget.index] = widget.answers[widget.index] == null
           ? widget.answer
-          : answers[widget.index] + widget.answer;
-      bloc.changeAnswer(answers);
-      AddAnswer.answersList = answers;
+          : widget.answers[widget.index] + widget.answer;
+      bloc.changeAnswer(widget.answers);
+      //AddAnswer.answersList = answers;
     } else {
       // If selected option is not null and greater than 1. Greater than one means
       // User has selected multiple answer. If user unselect selected answer then remove that
       // unselected option from the answer. If there is only one selected answer and user
       // unselect later then remove that question from the map.
-      if (answers[widget.index] != null && answers[widget.index].length > 1) {
-        answers[widget.index] =
-            answers[widget.index].replaceFirst(RegExp(widget.answer), '');
+      if (widget.answers[widget.index] != null &&
+          widget.answers[widget.index].length > 1) {
+        widget.answers[widget.index] = widget.answers[widget.index]
+            .replaceFirst(RegExp(widget.answer), '');
       } else {
-        answers[widget.index] = null;
+        widget.answers[widget.index] = null;
       }
-      bloc.changeAnswer(answers);
-      AddAnswer.answersList = answers;
+      bloc.changeAnswer(widget.answers);
+      //AddAnswer.answersList = answers;
     }
 
-    print('${answers.toString()}');
+    print('${widget.answers.toString()}');
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mcq_checker/src/blocs/student_bloc_provider.dart';
 import 'package:flutter_mcq_checker/src/models/module.dart';
 import 'package:flutter_mcq_checker/src/screens/add_answers.dart';
+import 'package:flutter_mcq_checker/src/screens/answers_screen.dart';
 import 'package:flutter_mcq_checker/src/screens/edit_answer_screen.dart';
 import 'package:flutter_mcq_checker/src/screens/student_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -98,7 +99,8 @@ class AppRoutes {
           bloc.changeAnswer(list);
         }
 
-        return EditAnswerScreen(bloc: bloc, module: module);
+        return AnswerScreen(bloc: bloc, module: module, isEdit: true);
+        // return EditAnswerScreen(bloc: bloc, module: module);
       },
     );
   }
@@ -110,7 +112,8 @@ class AppRoutes {
         Module module = settings.arguments;
         ModuleBloc bloc = ModuleProvider.of(context);
         bloc.changeAnswer(null);
-        return AddAnswer(module: module, bloc: bloc);
+        return AnswerScreen(bloc: bloc, module: module, isEdit: false);
+        //return AddAnswer(module: module, bloc: bloc);
       },
     );
   }

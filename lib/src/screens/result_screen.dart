@@ -135,7 +135,7 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  void onOptionItemSelect(dynamic value) {
+  void onOptionItemSelect(String value) async {
     switch (value) {
       case 'scan':
         showDialog(
@@ -146,15 +146,34 @@ class ResultScreen extends StatelessWidget {
         );
         break;
       case 'add':
-        Navigator.pushNamed(_scaffoldKey.currentContext, 'addAnswers',
+        final result = await Navigator.pushNamed(
+            _scaffoldKey.currentContext, 'addAnswers',
             arguments: module);
+        print('Add page result is $result');
+
         break;
       case 'edit':
-        Navigator.pushNamed(_scaffoldKey.currentContext, 'editAnswers',
+        final result = await Navigator.pushNamed(
+            _scaffoldKey.currentContext, 'editAnswers',
             arguments: module);
+        print('Edit page result is $result');
         break;
       default:
         break;
+    }
+  }
+
+  void showSnackBar(int result) {
+    if (result == 1) {
+      Scaffold.of(_scaffoldKey.currentContext)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text('Answers updated successfully ..'),
+        ));
+    } else {
+      Scaffold.of(_scaffoldKey.currentContext).showSnackBar(SnackBar(
+        content: Text('Something went wrong..'),
+      ));
     }
   }
 }
